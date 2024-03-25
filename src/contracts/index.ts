@@ -2,6 +2,6 @@ import { ChallengeType, ChallengesResponse, ChallengesResponseItem } from './cha
 import { ControlsResponseItem, ControlsResponse, ControlsRequest } from './controls';
 import { StudentsResponse, StudentsResponseItem } from './students';
 
-export { ChallengesResponse, ChallengesResponseItem, ChallengeType }
-export { StudentsResponse, StudentsResponseItem }
-export { ControlsResponseItem, ControlsResponse, ControlsRequest }
+export type { ChallengesResponse, ChallengesResponseItem, ChallengeType }
+export type { StudentsResponse, StudentsResponseItem }
+export type { ControlsResponseItem, ControlsResponse, ControlsRequest }

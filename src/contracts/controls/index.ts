@@ -1,4 +1,4 @@
-import { ChallengeType } from "src/challenges"
+import { ChallengeType } from "../challenges"
 
 export interface ControlsResponse {
     items: ControlsResponseItem[]

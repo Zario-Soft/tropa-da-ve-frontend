@@ -1,8 +1,7 @@
 import { Dialog, DialogActions, DialogContent, DialogTitle, FormControl, InputLabel, Select, TextField } from "@mui/material";
-import { ChallengesResponseItem } from 'src/contracts';
+import { ChallengesResponseItem, ChallengeType } from 'src/contracts';
 import { PaperComponent } from "../../components/dialogs";
 import { useState } from "react";
-import { ChallengeType } from "contracts/dist/challenges";
 import { NormalButton, WarningButton } from "../../components/buttons";
 import moment from "moment";
 import { Duration } from "./challenges.models";
