@@ -6,6 +6,7 @@ export interface ControlsResponse {
 
 export interface ControlsResponseItem {
     studentName: string,
+    studentPhone: string,
     controlId: number,
     studentId: number,
     challengeId: number,

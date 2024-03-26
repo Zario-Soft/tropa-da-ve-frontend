@@ -260,7 +260,7 @@ export default function Controls() {
             const summary: ReportContentSummary = {
                 items: groupedData[key].map((item) => {
                     const summaryItem: ReportContentSummaryItem = {
-                        value: `${item.end} - ${item.studentName} - ${item.challengeName}`
+                        value: `${item.end} - ${item.studentName} - ${item.challengeName}${(item.studentPhone ? ` - ${item.studentPhone}` : '')}`
                     }
 
                     return summaryItem
