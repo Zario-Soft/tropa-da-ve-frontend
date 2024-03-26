@@ -25,7 +25,7 @@ export class DateRange implements Range<number, string> {
     compare(input: string): boolean {
        
         const current = moment(input, "yyyy-MM-DD");
-        console.log(current);
+        //console.log(current);
         const from = this.from !== -1 ? current.add(this.from, 'months') : undefined;
         const to = this.to !== -1 ? current.add(this.to, 'months') : undefined;
 

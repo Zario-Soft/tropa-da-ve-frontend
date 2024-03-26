@@ -70,7 +70,7 @@ export default function Controls() {
             const { data } = await service.getAll();
 
             if (data && data.items) {
-                console.log(data.items);
+                //console.log(data.items);
                 const result = data.items.map(value => {
                     return {                         
                         ...value, 

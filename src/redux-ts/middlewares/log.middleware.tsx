@@ -6,7 +6,7 @@ export const LogMiddleware: Middleware<
     RootState
 > = storeApi => next => action => {
 
-    console.log(storeApi.getState())
+    //console.log(storeApi.getState())
 
     return next(action);
 }

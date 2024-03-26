@@ -15,7 +15,7 @@ export default function ControlFilters(props: ControlFiltersProps) {
     const [current, setCurrent] = useState<SearchFilters>({} as SearchFilters);
 
     const onDurationChange = async (e: Duration) => {
-        console.log(e);
+        //console.log(e);
         if (e.amount >= validMinimum) {
             const local = { ...current!, end: e }
             await setCurrent(local);
