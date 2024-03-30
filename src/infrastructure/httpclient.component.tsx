@@ -78,23 +78,23 @@ export class HttpClient {
     }
 
     public async get(url: string, options: AxiosRequestConfig<any> = {}): Promise<AxiosResponse<any, any>> {
-        return axios.get(url, { ...this.getDefaultOptions(), ...options });
+        return await axios.get(url, { ...this.getDefaultOptions(), ...options });
     }
 
     public async post(url: string, data: any = {}, options: AxiosRequestConfig<any> = {}): Promise<AxiosResponse<any, any>> {
-        return axios.post(url, data, { ...this.getDefaultOptions(), ...options });
+        return await axios.post(url, data, { ...this.getDefaultOptions(), ...options });
     }
 
     public async patch(url: string, data: any, options: AxiosRequestConfig<any> = {}): Promise<AxiosResponse<any, any>> {
-        return axios.patch(url, data, { ...this.getDefaultOptions(), ...options });
+        return await axios.patch(url, data, { ...this.getDefaultOptions(), ...options });
     }
 
     public async put(url: string, data: any, options: AxiosRequestConfig<any> = {}): Promise<AxiosResponse<any, any>> {
-        return axios.put(url, data, { ...this.getDefaultOptions(), ...options });
+        return await axios.put(url, data, { ...this.getDefaultOptions(), ...options });
     }
 
     public async delete(url: string, options: AxiosRequestConfig<any> = {}): Promise<AxiosResponse<any, any>> {
-        return axios.delete(url, { ...this.getDefaultOptions(), ...options });
+        return await axios.delete(url, { ...this.getDefaultOptions(), ...options });
     }
 
     private getDefaultOptions(): any {

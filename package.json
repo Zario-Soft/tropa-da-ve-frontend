@@ -31,7 +31,10 @@
     "@types/jest": "^27.5.2",
     "@types/node": "^16.18.87",
     "@types/react": "^18.2.64",
-    "@types/react-dom": "^18.2.21"
+    "@types/react-dom": "^18.2.21",
+    "postcss": ">=8.4.31",
+    "nth-check": ">=2.0.1",
+    "express": ">=4.19.2"
   },
   "scripts": {
     "first-start": "npm install && react-scripts start",
