@@ -70,11 +70,10 @@ export default function Controls() {
             const { data } = await service.getAll();
 
             if (data && data.items) {
-                //console.log(data.items);
-                const result = data.items.map(value => {
+                const result = data.items.map(control => {
                     return {                         
-                        ...value, 
-                        end: calculateEndDate(value.challengeType, value.challengeDuration, value.challengeEnd) 
+                        ...control, 
+                        end: calculateEndDate(control.challengeType, control.challengeDuration, control.challengeEnd, control.begin) 
                     }
                 })
 

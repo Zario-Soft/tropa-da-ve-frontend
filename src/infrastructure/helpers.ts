@@ -18,16 +18,18 @@ export const formatDate = (value: any): string => {
         : "--"
 }
 
+export const formatDateUnknown = (date: Date) => moment(date).format("yyyy-MM-DD") as unknown as Date;
+
 const moneyFormater = Intl.NumberFormat("pt-br", { style: 'currency', currency: 'BRL' })
 
 export const formatMoney = (params: GridValueFormatterParams) => moneyFormater.format(params.value);
 
-export const calculateEndDate = (type: ChallengeType, duration: string, end: Date): string => {
+export const calculateEndDate = (type: ChallengeType, duration: string, end: Date, begin?: Date): string => {
     if (type === "Fixo") return formatDate(end);
     
     const durationObj = Duration.Parse(duration);
 
-    const dueDate = durationObj.addDate(moment());
+    const dueDate = durationObj.addDate(moment(begin ?? new Date()));
 
     return formatDate(dueDate);
 }

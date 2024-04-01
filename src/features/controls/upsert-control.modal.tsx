@@ -11,14 +11,13 @@ import { toast } from "react-toastify";
 import './controls.css';
 import '../../index.css';
 import moment from "moment";
+import { formatDateUnknown } from 'src/infrastructure/helpers';
 
 interface UpsertControlModalProps {
     current?: ControlsResponseItem,
     onClose: () => Promise<void>,
     onSave: (e?: ControlsResponseItem) => Promise<void>,
 }
-
-const formatDate = (date: Date) => moment(date).format("yyyy-MM-DD") as unknown as Date;
 
 export default function UpsertControlModal(props: UpsertControlModalProps) {
     const studentsService = new StudentsService();
@@ -30,10 +29,10 @@ export default function UpsertControlModal(props: UpsertControlModalProps) {
         props.current ?
             {
                 ...props.current,
-                begin: formatDate(props.current.begin)
+                begin: formatDateUnknown(props.current.begin)
             } as ControlsResponseItem :
             {
-                begin: formatDate(new Date())
+                begin: formatDateUnknown(new Date())
             } as ControlsResponseItem);
 
     const [challenges, setChallenges] = useState<ChallengesResponseItem[]>([]);
@@ -97,7 +96,7 @@ export default function UpsertControlModal(props: UpsertControlModalProps) {
             setCurrent({
                 ...current,
                 amountPaid: e?.price ?? 0,
-                begin: e?.begin ?? formatDate(new Date())
+                begin: e?.begin ?? formatDateUnknown(new Date())
             });
         }
 
@@ -171,7 +170,7 @@ export default function UpsertControlModal(props: UpsertControlModalProps) {
 
                     <TextField
                         className='txt-box txt-box-small'
-                        id="valor-pago"
+                        id="data-inicio-dt"
                         label="Data de inicio"
                         type="date"
                         variant="outlined"

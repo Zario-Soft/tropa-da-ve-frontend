@@ -10,7 +10,7 @@ import ConfirmationDialog from "../../components/dialogs/confirmation.dialog";
 import ButtonsLine from "../../components/buttons-line";
 import UpsertModalStudent, { UpsertStudentResponse } from "./upsert-student.modal";
 import ControlsService from "../controls/controls.service";
-import moment from "moment";
+import { formatDateUnknown } from "src/infrastructure/helpers";
 
 const columns: ZGridColDef[] = [
     { field: 'id', width: 0, hide: true },
@@ -117,13 +117,15 @@ export default function Students() {
 
     const upsertControls = async (response: UpsertStudentResponse, studentId: number) => {        
         if (response.challenge) {
+            const begin = formatDateUnknown(response.challenge!.begin ?? new Date());
+
             if (!response.control?.controlId) {
                 await controlsService.new({
                     challengeId: response.challenge.id,
                     studentId,
                     active: true,
                     amountPaid: response.challenge!.price,
-                    begin: moment(new Date() ,'yyyy-MM-DD').toDate()
+                    begin
                 })
             }
             else {
@@ -134,7 +136,7 @@ export default function Students() {
                         studentId,
                         active: true,
                         amountPaid: response.control.amountPaid,
-                        begin: moment(new Date() ,'yyyy-MM-DD').toDate()
+                        begin 
                     })
             }
         }

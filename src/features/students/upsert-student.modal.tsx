@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 import { LoadingContext } from "../../providers/loading.provider";
 import { calculateEndDate } from "../../infrastructure/helpers";
 import ControlsService from "../controls/controls.service";
+import moment from "moment";
 
 export interface UpsertStudentResponse {
     student: StudentsResponseItem,
@@ -49,13 +50,14 @@ export default function UpsertModalStudent(props: UpsertModalChallengeProps) {
         });
     }
 
-    const onChallengeSelectChange = async (challenge?: ChallengesResponseItem) => {
+    const onChallengeSelectChange = async (challenge?: ChallengesResponseItem, localControl?:ControlsResponseItem) => {
         if (challenge) {
-            const endDate = calculateEndDate(challenge.type, challenge.duration, challenge.end);
+            const beginDate = localControl?.begin ?? control?.begin ?? challenge.begin;
+            const endDate = calculateEndDate(challenge.type, challenge.duration, challenge.end, beginDate);
 
             const label = `Vencimento em: ${endDate}`
 
-            await setSelectedChallenge({ challenge, label });
+            await setSelectedChallenge({ challenge: {...challenge, begin: beginDate}, label });
 
             if (control && control.challengeId !== challenge.id) {
                 await setControl(undefined);
@@ -110,7 +112,7 @@ export default function UpsertModalStudent(props: UpsertModalChallengeProps) {
     const onAgeChange = (e: any) => {
         const newValue = parseInt(e.target.value);
         if (newValue >= 0)
-            setCurrent({ ...current, age: newValue})
+            setCurrent({ ...current, age: newValue })
     }
 
     useEffect(() => { loadInfo() },
@@ -123,7 +125,7 @@ export default function UpsertModalStudent(props: UpsertModalChallengeProps) {
             maxWidth="lg"
             fullWidth
             aria-labelledby="draggable-dialog-title"
-            PaperComponent={PaperComponent}            
+            PaperComponent={PaperComponent}
         >
             <DialogTitle id="draggable-dialog-title" style={{ cursor: 'move' }}>
                 {isNew ? 'Novo Aluno' : `Editando Aluno '${current.name}'`}
@@ -184,7 +186,6 @@ export default function UpsertModalStudent(props: UpsertModalChallengeProps) {
                         width: '100%',
                         display: 'flex',
                         gap: '30px',
-                        alignItems: 'center',
                         marginTop: '15px'
                     }}>
                         {challenges && <SearchCombobox<ChallengesResponseItem>
@@ -196,6 +197,37 @@ export default function UpsertModalStudent(props: UpsertModalChallengeProps) {
                             getOptionLabel={(o: ChallengesResponseItem) => o.name ?? ''}
                             onAfter={onAfterSelectLoaded}
                         />}
+                        {selectedChallenge && <TextField
+                            className='txt-box txt-box-small'
+                            id="data-inicio-dt"
+                            label="Data de inicio"
+                            type="date"
+                            variant="outlined"
+                            value={control?.begin ?? selectedChallenge.challenge.begin ?? moment().format("yyyy-MM-DD") as unknown as Date}
+                            onChange={async (e) => {
+                                const changedDate = moment(e.target.value).format("yyyy-MM-DD") as unknown as Date;
+
+                                const localSelectedChallenge = {
+                                    ...selectedChallenge,
+                                    challenge: {
+                                        ...selectedChallenge.challenge,
+                                        begin: changedDate
+                                    }
+                                };
+
+                                let localControl: ControlsResponseItem | undefined;
+
+                                await setSelectedChallenge(localSelectedChallenge);
+                                if (control){
+                                    localControl = {...control, begin: changedDate};
+                                    await setControl(localControl);
+                                }
+
+                                await onChallengeSelectChange(localSelectedChallenge.challenge, localControl);
+                            }}
+                            InputLabelProps={{ shrink: true }}
+                        />}
+
                         {selectedChallenge && <p>{selectedChallenge.label}</p>}
                     </div>
 
