@@ -9,7 +9,7 @@ import { toast } from "react-toastify";
 import ButtonsLine from "../../components/buttons-line";
 import { ControlsResponseItem } from 'src/contracts';
 import ControlFilters from "./filters";
-import { SearchFilters } from "./controls.interfaces";
+import { SearchBoolean, SearchFilters, allItemsBoolean, validItemsBoolean } from "./controls.interfaces";
 import { calculateEndDate, formatDateParam, formatMoney } from "../../infrastructure/helpers";
 import { Duration } from "../challenges/challenges.models";
 import moment from "moment";
@@ -71,9 +71,9 @@ export default function Controls() {
 
             if (data && data.items) {
                 const result = data.items.map(control => {
-                    return {                         
-                        ...control, 
-                        end: calculateEndDate(control.challengeType, control.challengeDuration, control.challengeEnd, control.begin) 
+                    return {
+                        ...control,
+                        end: calculateEndDate(control.challengeType, control.challengeDuration, control.challengeEnd, control.begin)
                     }
                 })
 
@@ -195,8 +195,16 @@ export default function Controls() {
                 localFiltered = tryFilterRange(filterField, tsKey, localFiltered); //from, to
                 localFiltered = tryFilterDates(filterField, tsKey, localFiltered); //duration
             } else
-                if ((typeof filterField) === 'number' && (filterField as number) !== -1) {
-                    localFiltered = localFiltered.filter(user => user[tsKey] === Boolean(filterField))
+                if ((typeof filterField) === 'number') {
+                    const validBooleans = validItemsBoolean.map(m => m.value);
+                    const validAllPossibleBooleans = allItemsBoolean.map(m => m.value);
+
+                    if (validAllPossibleBooleans.includes((filterField as number))) {
+                        if (validBooleans.includes((filterField as number)))
+                            localFiltered = localFiltered.filter(user => user[tsKey] === SearchBoolean.TooBoolean(filterField as number))
+                    }
+                    else
+                        localFiltered = localFiltered.filter(user => user[tsKey] === (filterField as number))
                 }
         });
 
@@ -242,7 +250,7 @@ export default function Controls() {
         let localData = filteredData ?? data ?? [];
 
         const groupedData = localData
-            .slice()            
+            .slice()
             .sort((a, b) => moment(a.end, "DD/MM/yyyy").isSameOrBefore(moment(b.end, "DD/MM/yyyy")) ? -1 : 1)
             .reduce<{ [key: string]: ControlsResponseItemWithEndDate[] }>((group, current) => {
                 const key = moment(current.end, "DD/MM/yyyy").format("MM/yyyy");

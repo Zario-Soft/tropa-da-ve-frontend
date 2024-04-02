@@ -3,6 +3,7 @@ import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import NativeSelect from '@mui/material/NativeSelect';
 import { SxProps, Theme } from '@mui/material';
+import { SearchBoolean } from 'src/features/controls/controls.interfaces';
 
 interface NakedSelectProps {
     value: number,
@@ -15,7 +16,7 @@ interface NakedSelectProps {
 }
 
 export default function NakedSelect(props: NakedSelectProps) {
-    const defaultValue = -1;
+    const defaultValue = SearchBoolean.Indiferente().value;
     
     return (
         <Box>
