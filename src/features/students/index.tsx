@@ -14,7 +14,7 @@ import { formatDateUnknown } from "src/infrastructure/helpers";
 
 const columns: ZGridColDef[] = [
     { field: 'id', width: 0, hide: true },
-    { field: 'name', headerName: 'Nome', width: 190 },
+    { field: 'name', headerName: 'Nome', width: 290 },
     { field: 'age', headerName: 'Idade', width: 60 },
     { field: 'telephone', headerName: 'Telefone', width: 120 },
     { field: 'email', headerName: 'E-mail', width: 170 },

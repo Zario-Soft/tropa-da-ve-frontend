@@ -31,9 +31,10 @@ export default function ZGrid(props: ZGridProps) {
         columns={columns}
         columnVisibilityModel={hideColumns}
         hideFooterSelectedRowCount
+        style={{
+            maxHeight: '700px'
+        }}        
         rowSelection
-        autoHeight
-        rowCount={25}
         pageSizeOptions={[25]}
         initialState={{
             pagination: {
