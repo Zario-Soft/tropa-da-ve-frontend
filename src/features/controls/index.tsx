@@ -17,6 +17,7 @@ import UpsertControlModal from "./upsert-control.modal";
 import ConfirmationDialog from "../../components/dialogs/confirmation.dialog";
 import ReportControlDialog from "./report-control.modal";
 import { ReportContent, ReportContentSummary, ReportContentSummaryItem } from "../../components/report/report.interfaces";
+import ControlsBills from "./bills/controls-bills";
 
 const columns: ZGridColDef[] = [
     { field: 'challengeId', width: 0, hide: true },
@@ -316,7 +317,10 @@ export default function Controls() {
                             onReportClick={async () => await setReportDialogOpen(true)}
                         />
                     </>}
+                    <hr style={{ width: '100%', marginTop: '20px' }} />
+                    <ControlsBills />
                 </div>
+
             </SideBar >
         </div>
         {upsertDialogOpen && <UpsertControlModal

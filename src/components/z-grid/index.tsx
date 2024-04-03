@@ -32,7 +32,8 @@ export default function ZGrid(props: ZGridProps) {
         columnVisibilityModel={hideColumns}
         hideFooterSelectedRowCount
         style={{
-            maxHeight: '700px'
+            maxHeight: '700px',
+            minHeight: '300px'
         }}        
         rowSelection
         pageSizeOptions={[25]}
