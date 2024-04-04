@@ -39,7 +39,7 @@ export default function ControlsBills() {
 
     const internalGenerateReport = (): ReportContent => {
 
-        let localData = controlData!;
+        let localData: ControlsResponseItem[] = controlData ?? [];
 
         const groupedData = localData
             .slice()
