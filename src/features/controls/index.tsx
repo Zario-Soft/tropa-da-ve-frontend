@@ -10,13 +10,14 @@ import ButtonsLine from "../../components/buttons-line";
 import { ControlsResponseItem } from 'src/contracts';
 import ControlFilters from "./filters";
 import { SearchBoolean, SearchFilters, allItemsBoolean, validItemsBoolean } from "./controls.interfaces";
-import { calculateEndDate, formatDateParam, formatMoney } from "../../infrastructure/helpers";
+import { calculateEndDate, formatDateParam, formatMoneyGrid } from "../../infrastructure/helpers";
 import { Duration } from "../challenges/challenges.models";
 import moment from "moment";
 import UpsertControlModal from "./upsert-control.modal";
 import ConfirmationDialog from "../../components/dialogs/confirmation.dialog";
 import ReportControlDialog from "./report-control.modal";
 import { ReportContent, ReportContentSummary, ReportContentSummaryItem } from "../../components/report/report.interfaces";
+import ControlsBills from "./bills/controls-bills";
 
 const columns: ZGridColDef[] = [
     { field: 'challengeId', width: 0, hide: true },
@@ -37,7 +38,7 @@ const columns: ZGridColDef[] = [
         width: 120,
         filterable: false
     },
-    { field: 'amountPaid', headerName: 'Total Pago', width: 120, valueFormatter: formatMoney, filterable: false },
+    { field: 'amountPaid', headerName: 'Total Pago', width: 120, valueFormatter: formatMoneyGrid, filterable: false },
     {
         field: 'active',
         headerName: 'Ativo?',
@@ -316,7 +317,10 @@ export default function Controls() {
                             onReportClick={async () => await setReportDialogOpen(true)}
                         />
                     </>}
+                    <hr style={{ width: '100%', marginTop: '20px' }} />
+                    <ControlsBills />
                 </div>
+
             </SideBar >
         </div>
         {upsertDialogOpen && <UpsertControlModal
