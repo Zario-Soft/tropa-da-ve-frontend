@@ -24,7 +24,7 @@ export default function ReportBillsDialog(props: ReportControlDialogProps){
                 <Grid item xs={12}>
                     {document && <Report
                     key={'report-key'}
-                    title="Relatório de Controle"
+                    title="Relatório Financeiro"
                     onLoadContent={props.onLoadContent}
                     />}
                 </Grid>

@@ -10,7 +10,7 @@ import ButtonsLine from "../../components/buttons-line";
 import { ControlsResponseItem } from 'src/contracts';
 import ControlFilters from "./filters";
 import { SearchBoolean, SearchFilters, allItemsBoolean, validItemsBoolean } from "./controls.interfaces";
-import { calculateEndDate, formatDateParam, formatMoney } from "../../infrastructure/helpers";
+import { calculateEndDate, formatDateParam, formatMoneyGrid } from "../../infrastructure/helpers";
 import { Duration } from "../challenges/challenges.models";
 import moment from "moment";
 import UpsertControlModal from "./upsert-control.modal";
@@ -38,7 +38,7 @@ const columns: ZGridColDef[] = [
         width: 120,
         filterable: false
     },
-    { field: 'amountPaid', headerName: 'Total Pago', width: 120, valueFormatter: formatMoney, filterable: false },
+    { field: 'amountPaid', headerName: 'Total Pago', width: 120, valueFormatter: formatMoneyGrid, filterable: false },
     {
         field: 'active',
         headerName: 'Ativo?',

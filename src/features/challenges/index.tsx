@@ -9,7 +9,7 @@ import ButtonsLine from "../../components/buttons-line";
 import { toast } from "react-toastify";
 import ConfirmationDialog from "../../components/dialogs/confirmation.dialog";
 import UpsertModalChallenge from "./upsert-challenge.modal";
-import { formatDateParam, formatMoney } from "../../infrastructure/helpers";
+import { formatDateParam, formatMoneyGrid } from "../../infrastructure/helpers";
 
 
 const columns: ZGridColDef[] = [
@@ -25,7 +25,7 @@ const columns: ZGridColDef[] = [
     },
     { field: 'end', headerName: 'Fim', width: 120, valueFormatter: formatDateParam },
     { field: 'duration', headerName: 'Tempo', width: 120 },
-    { field: 'price', headerName: 'Preço', width: 120, valueFormatter: formatMoney },
+    { field: 'price', headerName: 'Preço', width: 120, valueFormatter: formatMoneyGrid },
 ];
 
 export default function Challenges() {

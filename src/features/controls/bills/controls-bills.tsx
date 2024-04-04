@@ -7,12 +7,12 @@ import { LoadingContext } from "src/providers/loading.provider";
 import moment from "moment";
 import ControlsService from "../controls.service";
 import { ControlsResponseItem } from "src/contracts";
+import { formatMoney } from "src/infrastructure/helpers";
 
 export default function ControlsBills() {
     const service = new ControlsService();
     const [showFilter, setRefreshFilter] = useState<boolean>(true);
     const [showReport, setShowReport] = useState<boolean>(false);
-    const [filter, setFilter] = useState<BillsFiltersResult>();
     const [controlData, setData] = useState<ControlsResponseItem[]>();
 
     const { setIsLoading } = useContext(LoadingContext);
@@ -25,14 +25,12 @@ export default function ControlsBills() {
     const generateData = async (filters: BillsFiltersResult) => {
         try {
             await setIsLoading(true);
-            await setFilter(filters);
 
             const { data } = await service.getByDates(filters);
             if (data) {
-                setData(data.items)
+                await setData(data.items)
+                await setShowReport(true);
             }
-
-            await setShowReport(true);
         }
         finally {
             await setIsLoading(false);
@@ -46,27 +44,44 @@ export default function ControlsBills() {
         const groupedData = localData
             .slice()
             .sort((a, b) => moment(a.begin, "DD/MM/yyyy").isSameOrBefore(moment(b.begin, "DD/MM/yyyy")) ? -1 : 1)
-            .reduce<{ [key: string]: ControlsResponseItem[] }>((group, current) => {
-                const key = moment(current.begin, "DD/MM/yyyy").format("MM/yyyy");
-                if (group[key])
-                    group[key] = [...group[key], current];
-                else
-                    group[key] = [current];
+            .reduce<{ [key: string]: Record<string, number> }>((group, current) => {
+                const key = moment(current.begin, "yyyy-MM-DD").format("MM/yyyy");
+                
+                if (group[key]) {
+                    if (group[key][current.challengeName]) {
+                        group[key][current.challengeName] += current.amountPaid;
+                    }
+                    else {
+                        group[key][current.challengeName] = current.amountPaid;
+                    }
+                }
+                else {
+                    group[key] = {};
+                    group[key][current.challengeName] = current.amountPaid;
+                }
 
                 return group;
             }, {});
 
         const summaries = Object.keys(groupedData).map((key) => {
 
-            const summary: ReportContentSummary = {
-                items: groupedData[key].map((item) => {
-                    const summaryItem: ReportContentSummaryItem = {
-                        value: `${item.begin} - ${item.studentName} - ${item.challengeName}${(item.studentPhone ? ` - ${item.studentPhone}` : '')}`
-                    }
+            const summaryItems = Object.keys(groupedData[key]).map((mk) => {
+                    
+                    
+                const summaryItem: ReportContentSummaryItem = {
+                    value: `${mk} - ${formatMoney(groupedData[key][mk])}`
+                }
 
-                    return summaryItem
-                }),
-                title: `Vencimento em ${key}`,
+                return summaryItem;
+            });
+
+            const total = Object.keys(groupedData[key])
+            .map((mk) => groupedData[key][mk])
+            .reduce((prev, curr) => prev += curr, 0);
+            
+            const summary: ReportContentSummary = {
+                items: summaryItems,
+                title: `Valores pagos em ${key} (Total: ${formatMoney(total)})`,
                 breakPage: true,
             }
 
@@ -88,7 +103,7 @@ export default function ControlsBills() {
         />}
 
         {showReport && <ReportBillsDialog
-            onClose={async () => { }}
+            onClose={async () => await setShowReport(false)}
             onLoadContent={internalGenerateReport}
         />}
     </>

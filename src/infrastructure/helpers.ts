@@ -22,7 +22,9 @@ export const formatDateUnknown = (date: Date) => moment(date).format("yyyy-MM-DD
 
 const moneyFormater = Intl.NumberFormat("pt-br", { style: 'currency', currency: 'BRL' })
 
-export const formatMoney = (params: GridValueFormatterParams) => moneyFormater.format(params.value);
+export const formatMoneyGrid = (params: GridValueFormatterParams) => formatMoney(params.value)
+
+export const formatMoney = (params: any) => moneyFormater.format(params);
 
 export const calculateEndDate = (type: ChallengeType, duration: string, end: Date, begin?: Date): string => {
     if (type === "Fixo") return formatDate(end);

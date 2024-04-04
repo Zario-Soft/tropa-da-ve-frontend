@@ -20,7 +20,14 @@ export default function BillsFilters({ onButtonClick }: BillsFiltersProps) {
         return year.substring(0, 1).toUpperCase() + year.substring(1, year.length)
     })
 
-    const [current, setCurrent] = useState<BillsFiltersResult>({} as BillsFiltersResult);
+    const defaultValue: BillsFiltersResult = {
+        monthFrom: new Date().getMonth(),
+        monthTo: new Date().getMonth(),
+        yearFrom: new Date().getFullYear(),
+        yearTo: new Date().getFullYear(),
+    }
+
+    const [current, setCurrent] = useState<BillsFiltersResult>(defaultValue);
 
     return <div style={{
         display: 'flex',
@@ -32,7 +39,7 @@ export default function BillsFilters({ onButtonClick }: BillsFiltersProps) {
             <Select
                 native
                 label="month-from"
-                value={current?.monthFrom ?? new Date().getMonth()}
+                value={current?.monthFrom}
                 onChange={(e: any) => {
                     const local: BillsFiltersResult = {...current, monthFrom: parseInt(e.target.value)}
 
@@ -49,7 +56,7 @@ export default function BillsFilters({ onButtonClick }: BillsFiltersProps) {
             label="Ano de"
             variant="outlined"
             type="number"
-            value={current?.yearFrom ?? new Date().getFullYear()}
+            value={current?.yearFrom}
             onChange={(e: any) => {
                 const local: BillsFiltersResult = {...current, yearFrom: parseInt(e.target.value)}
 
@@ -63,7 +70,7 @@ export default function BillsFilters({ onButtonClick }: BillsFiltersProps) {
             <Select
                 native
                 label="Tipo"
-                value={current?.monthTo ?? new Date().getMonth()}
+                value={current?.monthTo}
                 onChange={(e: any) => {
                     const local: BillsFiltersResult = {...current, monthTo: parseInt(e.target.value)}
 
@@ -80,7 +87,7 @@ export default function BillsFilters({ onButtonClick }: BillsFiltersProps) {
             label="Intervalo"
             variant="outlined"
             type="number"
-            value={current?.yearTo ?? new Date().getFullYear()}
+            value={current?.yearTo}
             onChange={(e: any) => {
                 const local: BillsFiltersResult = {...current, yearTo: parseInt(e.target.value)}
 
