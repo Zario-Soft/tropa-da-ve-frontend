@@ -53,7 +53,7 @@ export default function BillsFilters({ onButtonClick }: BillsFiltersProps) {
         <TextField
             id="valor"
             className='txt-box txt-box-small'
-            label="Ano de"
+            label="Ano Início"
             variant="outlined"
             type="number"
             value={current?.yearFrom}
@@ -66,7 +66,7 @@ export default function BillsFilters({ onButtonClick }: BillsFiltersProps) {
         />
         <p>Até</p>
         <FormControl variant="outlined" className="general-input form-control txt-box-small">
-            <InputLabel shrink>Mês fim</InputLabel>
+            <InputLabel shrink>Mês Fim</InputLabel>
             <Select
                 native
                 label="Tipo"
@@ -84,7 +84,7 @@ export default function BillsFilters({ onButtonClick }: BillsFiltersProps) {
         <TextField
             id="valor"
             className='txt-box txt-box-small'
-            label="Intervalo"
+            label="Ano Fim"
             variant="outlined"
             type="number"
             value={current?.yearTo}
