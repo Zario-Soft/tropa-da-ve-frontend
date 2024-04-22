@@ -266,7 +266,9 @@ export default function Controls() {
         const summaries = Object.keys(groupedData).map((key) => {
 
             const summary: ReportContentSummary = {
-                items: groupedData[key].map((item) => {
+                items: groupedData[key]
+                .sort((a, b) => a.studentName < b.studentName ? -1 : 1)
+                .map((item) => {
                     const summaryItem: ReportContentSummaryItem = {
                         value: `${item.end} - ${item.studentName} - ${item.challengeName}${(item.studentPhone ? ` - ${item.studentPhone}` : '')}`
                     }
