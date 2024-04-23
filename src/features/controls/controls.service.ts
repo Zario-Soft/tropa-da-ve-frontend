@@ -2,6 +2,7 @@ import { AxiosResponse } from 'axios';
 import { HttpClient } from '../../infrastructure/httpclient.component';
 import { ControlsResponse, ControlsRequest, ControlsResponseItem } from 'src/contracts';
 import { BillsFiltersResult } from './bills/filters';
+import { ControlsResponseItemWithEndDate } from 'src/contracts/controls';
 
 export class ControlsService {
     private readonly request: HttpClient;
@@ -17,6 +18,10 @@ export class ControlsService {
 
     public async getByDates(req: BillsFiltersResult): Promise<AxiosResponse<ControlsResponse>> {
         return await this.request.post(`${this.BASE_URL}/bydates`, req);
+    }
+
+    public async getByExpiryDates(req: BillsFiltersResult): Promise<AxiosResponse<{ items: ControlsResponseItemWithEndDate[] }>> {
+        return await this.request.post(`${this.BASE_URL}/byexpirydates`, req);
     }
 
     public async getLastActiveByStudent(studentId: number): Promise<AxiosResponse<ControlsResponseItem | undefined>> {

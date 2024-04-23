@@ -9,15 +9,16 @@ import { toast } from "react-toastify";
 import ButtonsLine from "../../components/buttons-line";
 import { ControlsResponseItem } from 'src/contracts';
 import ControlFilters from "./filters";
-import { SearchBoolean, SearchFilters, allItemsBoolean, validItemsBoolean } from "./controls.interfaces";
+import { SearchBoolean, SearchFilters, allItemsBoolean, validItemsBoolean, DurationFilter } from "./controls.interfaces";
 import { calculateEndDate, formatDateParam, formatMoneyGrid } from "../../infrastructure/helpers";
-import { Duration } from "../challenges/challenges.models";
 import moment from "moment";
 import UpsertControlModal from "./upsert-control.modal";
 import ConfirmationDialog from "../../components/dialogs/confirmation.dialog";
 import ReportControlDialog from "./report-control.modal";
 import { ReportContent, ReportContentSummary, ReportContentSummaryItem } from "../../components/report/report.interfaces";
 import ControlsBills from "./bills/controls-bills";
+import ActiveStudents from "./active-students/active-students";
+import { ControlsResponseItemWithEndDate } from "src/contracts/controls";
 
 const columns: ZGridColDef[] = [
     { field: 'challengeId', width: 0, hide: true },
@@ -46,10 +47,7 @@ const columns: ZGridColDef[] = [
         valueFormatter: (params: GridValueFormatterParams) => params.value ? "Sim" : "Não", filterable: false
     },
 ];
-
-type ControlsResponseItemWithEndDate = ControlsResponseItem & {
-    end: string
-}
+const Line = () => <hr style={{ width: '100%', marginTop: '20px' }} />
 
 export default function Controls() {
     let service = new ControlsService();
@@ -229,18 +227,23 @@ export default function Controls() {
 
     const tryFilterDates = (filterField: any, tsKey: never, localFiltered: ControlsResponseItemWithEndDate[])
         : ControlsResponseItemWithEndDate[] => {
-        if (!(filterField instanceof Duration)) return localFiltered;
+        if (
+            !(filterField instanceof DurationFilter)
+        ) return localFiltered;
 
-        const duration = (filterField as Duration);
+        const durationFilter = (filterField as DurationFilter);
 
-        if (!duration.amount || duration.amount < 0) return localFiltered;
+        if (!durationFilter.isValid()) return localFiltered;
 
         localFiltered = localFiltered.filter(controls => {
-            let current = moment(controls[tsKey], "DD/MM/yyyy");
+            let obj = controls[tsKey];
+            if (!obj) {
+                const newKey = (tsKey as string).split("_")[0] as keyof {};
+                obj = controls[newKey];
+            }
+            let current = moment(obj, "DD/MM/yyyy");
 
-            const added = duration.addDate(moment());
-
-            return current.isSameOrBefore(added);
+            return durationFilter.match(current);
         });
 
         return localFiltered;
@@ -275,7 +278,7 @@ export default function Controls() {
 
                     return summaryItem
                 }),
-                title: `Vencimento em ${key}`,
+                title: `Mês ${key}`,
                 breakPage: true,
             }
 
@@ -319,8 +322,10 @@ export default function Controls() {
                             onReportClick={async () => await setReportDialogOpen(true)}
                         />
                     </>}
-                    <hr style={{ width: '100%', marginTop: '20px' }} />
+                    <Line />
                     <ControlsBills />
+                    <Line />
+                    <ActiveStudents />
                 </div>
 
             </SideBar >

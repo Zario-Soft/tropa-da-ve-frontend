@@ -30,7 +30,7 @@ export class Duration {
     }
 
     addDate(input: moment.Moment): moment.Moment {
-        const result = input.add(this.amount, this.type === "Dias" ? 'days' : 'months');
+        const result = input.clone().add(this.amount, this.type === "Dias" ? 'days' : 'months');
         return result;
     }
 }

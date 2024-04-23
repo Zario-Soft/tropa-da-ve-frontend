@@ -1,5 +1,5 @@
 import NakedSelect from "../../components/select/naked-select.component"
-import { SearchBoolean, SearchFilters, allItemsBoolean } from "./controls.interfaces"
+import { DurationFilter, SearchBoolean, SearchFilters, allItemsBoolean } from "./controls.interfaces"
 import { useState } from "react"
 import NakedSelectDuration from "../../components/select-duration/select-duration.component";
 
@@ -20,9 +20,19 @@ export default function ControlFilters(props: ControlFiltersProps) {
     const [current, setCurrent] = useState<SearchFilters>({} as SearchFilters);
 
     const onDurationChange = async (e: Duration) => {
-        //console.log(e);
         if (e.amount >= validMinimum) {
-            const local = { ...current!, end: e }
+            const local: SearchFilters = { ...current!, end: new DurationFilter(false, e) }
+            await setCurrent(local);
+
+            if (props.onFilterChange)
+                await props.onFilterChange(local)
+        }
+    }
+
+    const onActiveChange = async (e: Duration) => {
+        console.log(e);
+        if (e.amount >= validMinimum) {
+            const local: SearchFilters = { ...current!, end_inverse: new DurationFilter(true, e, true) }
             await setCurrent(local);
 
             if (props.onFilterChange)
@@ -64,5 +74,13 @@ export default function ControlFilters(props: ControlFiltersProps) {
                     await props.onFilterChange(local)
             }}
         />
+        {false && <><Line />
+        <NakedSelectDuration
+            validMinimum={validMinimum}
+            id="active-in-filter"
+            label="Ativo em"
+            name="active-in-duration"
+            onChange={async (e) => await onActiveChange(e)}
+        /></>}
     </div>
 }

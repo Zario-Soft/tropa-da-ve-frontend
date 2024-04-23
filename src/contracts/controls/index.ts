@@ -19,6 +19,10 @@ export interface ControlsResponseItem {
     active: boolean,
   }
 
+  export interface ControlsResponseItemWithEndDate extends ControlsResponseItem {
+    end: string
+}
+
   export interface ControlsRequest {
     id?: number,
     challengeId: number,

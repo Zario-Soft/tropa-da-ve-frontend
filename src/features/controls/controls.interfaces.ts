@@ -4,11 +4,36 @@ import { Duration } from "../challenges/challenges.models";
 export interface SearchFilters {
     save: boolean,
 
-    end: Duration,
+    end: DurationFilter,
+    end_inverse: DurationFilter,
 
     active: number,
 
     challengeId: number,
+}
+
+export class DurationFilter {
+    inverse: boolean = false;
+    exact: boolean = false;
+    duration: Duration;
+    constructor(_inverse: boolean, _duration: Duration, _exact: boolean = false) {
+        this.inverse = _inverse;
+        this.duration = _duration;
+        this.exact = _exact;
+    }
+
+    isValid(): boolean {
+        return this.duration.amount !== undefined && this.duration.amount > 0
+    }
+
+    match(date: moment.Moment): boolean {
+        const calculated = this.inverse
+            ? moment().startOf('month')
+            : moment().endOf('month');
+        const added = this.duration.addDate(calculated);
+
+        return this.inverse ? date.isSameOrAfter(added) : date.isSameOrBefore(added);
+    }
 }
 
 export class SearchBoolean {
