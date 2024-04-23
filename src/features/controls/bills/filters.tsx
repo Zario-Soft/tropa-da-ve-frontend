@@ -21,8 +21,8 @@ export default function BillsFilters({ onButtonClick }: BillsFiltersProps) {
     })
 
     const defaultValue: BillsFiltersResult = {
-        monthFrom: new Date().getMonth(),
-        monthTo: new Date().getMonth(),
+        monthFrom: new Date().getMonth() + 1,
+        monthTo: new Date().getMonth() + 1,
         yearFrom: new Date().getFullYear(),
         yearTo: new Date().getFullYear(),
     }

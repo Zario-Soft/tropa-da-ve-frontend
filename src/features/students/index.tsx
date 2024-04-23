@@ -19,6 +19,7 @@ const columns: ZGridColDef[] = [
     { field: 'telephone', headerName: 'Telefone', width: 120 },
     { field: 'email', headerName: 'E-mail', width: 170 },
     { field: 'city', headerName: 'Cidade', width: 120 },
+    { field: 'challengeName', headerName: 'Desafio', width: 190 },
 ];
 
 export default function Students() {
