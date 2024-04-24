@@ -41,7 +41,10 @@ export default function Students() {
             const { data } = await studentService.getAll();
 
             if (data && data.items) {
-                await setData(data.items);
+                const ordered = data.items
+                .slice()
+                .sort((a, b) => a.name < b.name ? -1 : 1);
+                await setData(ordered);
             }
         } catch {
             toast.error('Não foi possivel carregar os dados. Verifique a internet.');
