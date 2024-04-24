@@ -27,12 +27,9 @@ export class DurationFilter {
     }
 
     match(date: moment.Moment): boolean {
-        const calculated = this.inverse
-            ? moment().startOf('month')
-            : moment().endOf('month');
-        const added = this.duration.addDate(calculated);
+        const added = this.duration.addDate(moment());
 
-        return this.inverse ? date.isSameOrAfter(added) : date.isSameOrBefore(added);
+        return date.isSameOrBefore(added);
     }
 }
 
