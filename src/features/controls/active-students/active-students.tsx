@@ -71,13 +71,12 @@ export default function ActiveStudents() {
 
         });
 
-        Object.keys(group).forEach((innerEnd: string) => {
+        Object.keys(group).forEach((currDate: string) => {
             const filtered = localData
             .slice()
-            .filter(a => moment(a.begin, "yyyy-MM-DD").isBetween(from, moment(innerEnd, "yyyy-MM-DD")) &&
-                moment(a.end, "yyyy-MM-DD").isSameOrAfter(moment(innerEnd, "yyyy-MM-DD")));
+            .filter(a => moment(currDate, "yyyy-MM-DD").isBetween(moment(a.begin, "yyyy-MM-DD"), moment(a.end, "yyyy-MM-DD")));
 
-                group[innerEnd] = [...group[innerEnd], ...filtered];
+                group[currDate] = [...group[currDate], ...filtered];
         });
 
         //console.log(r)
