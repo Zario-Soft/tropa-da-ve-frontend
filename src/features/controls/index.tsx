@@ -207,7 +207,8 @@ export default function Controls() {
                 }
         });
 
-        await setFilteredData([...localFiltered])
+        let final = localFiltered.sort((a, b) => a.studentName < b.studentName ? -1 : 1);
+        await setFilteredData(final)
     }
 
     const tryFilterRange = (filterField: never, tsKey: never, localFiltered: ControlsResponseItemWithEndDate[])
@@ -271,14 +272,14 @@ export default function Controls() {
 
             const summary: ReportContentSummary = {
                 items: groupedData[key]
-                .sort((a, b) => a.studentName < b.studentName ? -1 : 1)
-                .map((item) => {
-                    const summaryItem: ReportContentSummaryItem = {
-                        value: `${item.end} - ${item.studentName} - ${item.challengeName}${(item.studentPhone ? ` - ${item.studentPhone}` : '')}`
-                    }
+                    .sort((a, b) => a.studentName < b.studentName ? -1 : 1)
+                    .map((item) => {
+                        const summaryItem: ReportContentSummaryItem = {
+                            value: `${item.end} - ${item.studentName} - ${item.challengeName}${(item.studentPhone ? ` - ${item.studentPhone}` : '')}`
+                        }
 
-                    return summaryItem
-                }),
+                        return summaryItem
+                    }),
                 title: `Mês ${key}`,
                 breakPage: true,
             }
