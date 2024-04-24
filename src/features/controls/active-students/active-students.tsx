@@ -52,12 +52,9 @@ export default function ActiveStudents() {
         let localData: ControlsResponseItemWithEndDate[] = controlData ?? [];
 
         const from = moment(`${filters.yearFrom}${String(filters.monthFrom).padStart(2, '0')}01`, "YYYYMMDD");
-        console.log(from);
         const to = moment(`${filters.yearTo}${String(filters.monthTo).padStart(2, '0')}28`, "YYYYMMDD").endOf('month');
-        console.log(to);
 
         const range = getRange(from, to);
-        //console.log(range);
         
         let group: Record<string, ControlsResponseItem[]> = {};
         
@@ -78,10 +75,6 @@ export default function ActiveStudents() {
 
                 group[currDate] = [...group[currDate], ...filtered];
         });
-
-        //console.log(r)
-        console.log(localData)
-        console.log(group)
 
         const summaries = Object.keys(group)
         .filter(key => group[key].length > 0)        

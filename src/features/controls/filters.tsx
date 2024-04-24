@@ -30,7 +30,6 @@ export default function ControlFilters(props: ControlFiltersProps) {
     }
 
     const onActiveChange = async (e: Duration) => {
-        console.log(e);
         if (e.amount >= validMinimum) {
             const local: SearchFilters = { ...current!, end_inverse: new DurationFilter(true, e, true) }
             await setCurrent(local);

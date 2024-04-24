@@ -24,8 +24,8 @@ const columns: ZGridColDef[] = [
     { field: 'challengeId', width: 0, hide: true },
     { field: 'controlId', width: 0, hide: true },
     { field: 'studentId', width: 0, hide: true },
-    { field: 'studentName', headerName: 'Aluno', width: 190, filterable: false },
-    { field: 'challengeName', headerName: 'Desafio', width: 190, filterable: false },
+    { field: 'studentName', headerName: 'Aluno', width: 350 },
+    { field: 'challengeName', headerName: 'Desafio', width: 190 },
     {
         field: 'begin',
         headerName: 'Início',
@@ -241,6 +241,7 @@ export default function Controls() {
                 const newKey = (tsKey as string).split("_")[0] as keyof {};
                 obj = controls[newKey];
             }
+
             let current = moment(obj, "DD/MM/yyyy");
 
             return durationFilter.match(current);
