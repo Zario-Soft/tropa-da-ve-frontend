@@ -71,7 +71,7 @@ export default function ActiveStudents() {
         Object.keys(group).forEach((currDate: string) => {
             const filtered = localData
             .slice()
-            .filter(a => moment(currDate, "yyyy-MM-DD").isBetween(moment(a.begin, "yyyy-MM-DD"), moment(a.end, "yyyy-MM-DD")));
+            .filter(a => moment(currDate, "yyyy-MM-DD").isBetween(moment(a.begin, "yyyy-MM-DD").startOf('month'), moment(a.end, "yyyy-MM-DD").endOf('month')));
 
                 group[currDate] = [...group[currDate], ...filtered];
         });
