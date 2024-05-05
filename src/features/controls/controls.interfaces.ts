@@ -29,7 +29,7 @@ export class DurationFilter {
     match(date: moment.Moment): boolean {
         const added = this.duration.addDate(moment());
 
-        return date.isSameOrBefore(added);
+        return date.isSameOrAfter(added);
     }
 }
 

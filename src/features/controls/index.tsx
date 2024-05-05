@@ -243,7 +243,7 @@ export default function Controls() {
                 obj = controls[newKey];
             }
 
-            let current = moment(obj, "DD/MM/yyyy");
+            let current = moment(obj, "DD/MM/yyyy").add(-1, 'days');
 
             return durationFilter.match(current);
         });
