@@ -21,8 +21,8 @@ export interface BillFiltersDateResult {
 
 export default function BillsFilters({ onButtonClick }: BillsFiltersProps) {
     const defaultValue: BillFiltersDateResult = {
-        from: moment("DD/MM/yyyy").toDate(),
-        to: moment("DD/MM/yyyy").toDate()
+        from: moment().format("yyyy-MM-DD") as unknown as Date,
+        to: moment().format("yyyy-MM-DD") as unknown as Date
     }
 
     const [current, setCurrent] = useState<BillFiltersDateResult>(defaultValue);
