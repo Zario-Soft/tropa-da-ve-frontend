@@ -1,9 +1,10 @@
-import { FormControl, InputLabel, Select, TextField } from "@mui/material";
+import { TextField } from "@mui/material";
+import moment from "moment";
 import { useState } from "react";
 import { GreenButton } from "src/components/buttons";
 
 interface BillsFiltersProps {
-    onButtonClick: (e: BillsFiltersResult) => Promise<void>,
+    onButtonClick: (e: BillFiltersDateResult) => Promise<void>,
 }
 
 export interface BillsFiltersResult {
@@ -13,93 +14,58 @@ export interface BillsFiltersResult {
     yearTo: number
 }
 
-export default function BillsFilters({ onButtonClick }: BillsFiltersProps) {
-    const months = Array.from({ length: 12 }, (_, monthNumber) => {
-        const date = new Date(0, monthNumber);
-        const year = date.toLocaleDateString('pt-BR', { month: "long" });
-        return year.substring(0, 1).toUpperCase() + year.substring(1, year.length)
-    })
+export interface BillFiltersDateResult {
+    from: Date,
+    to: Date,
+}
 
-    const defaultValue: BillsFiltersResult = {
-        monthFrom: new Date().getMonth() + 1,
-        monthTo: new Date().getMonth() + 1,
-        yearFrom: new Date().getFullYear(),
-        yearTo: new Date().getFullYear(),
+export default function BillsFilters({ onButtonClick }: BillsFiltersProps) {
+    const defaultValue: BillFiltersDateResult = {
+        from: moment("DD/MM/yyyy").toDate(),
+        to: moment("DD/MM/yyyy").toDate()
     }
 
-    const [current, setCurrent] = useState<BillsFiltersResult>(defaultValue);
+    const [current, setCurrent] = useState<BillFiltersDateResult>(defaultValue);
 
     return <div style={{
         display: 'flex',
         gap: '20px',
         alignItems: 'center'
     }}>
-        <FormControl variant="outlined" className="general-input form-control txt-box-small">
-            <InputLabel shrink>Mês Início</InputLabel>
-            <Select
-                native
-                label="month-from"
-                value={current?.monthFrom}
-                onChange={(e: any) => {
-                    const local: BillsFiltersResult = {...current, monthFrom: parseInt(e.target.value)}
-
-                    setCurrent(local);
-                }}
-            >
-                {months.map((month, value) => <option value={value + 1}>{month}</option>)}
-            </Select>
-        </FormControl>
-
         <TextField
-            id="valor"
             className='txt-box txt-box-small'
-            label="Ano Início"
+            id="data-inicio-dt"
+            label="Inicio"
+            type="date"
             variant="outlined"
-            type="number"
-            value={current?.yearFrom}
+            value={current.from}
             onChange={(e: any) => {
-                const local: BillsFiltersResult = {...current, yearFrom: parseInt(e.target.value)}
+                const local: BillFiltersDateResult = { ...current, from: moment(e.target.value).format("yyyy-MM-DD") as unknown as Date }
 
                 setCurrent(local);
             }}
             InputLabelProps={{ shrink: true }}
         />
         <p>Até</p>
-        <FormControl variant="outlined" className="general-input form-control txt-box-small">
-            <InputLabel shrink>Mês Fim</InputLabel>
-            <Select
-                native
-                label="Tipo"
-                value={current?.monthTo}
-                onChange={(e: any) => {
-                    const local: BillsFiltersResult = {...current, monthTo: parseInt(e.target.value)}
-
-                    setCurrent(local);
-                }}
-            >
-                {months.map((month, value) => <option value={value + 1}>{month}</option>)}
-            </Select>
-        </FormControl>
-
         <TextField
-            id="valor"
             className='txt-box txt-box-small'
-            label="Ano Fim"
+            id="data-fim-dt"
+            label="Fim"
+            type="date"
             variant="outlined"
-            type="number"
-            value={current?.yearTo}
+            value={current.to}
             onChange={(e: any) => {
-                const local: BillsFiltersResult = {...current, yearTo: parseInt(e.target.value)}
+                const local: BillFiltersDateResult = { ...current, to: moment(e.target.value).format("yyyy-MM-DD") as unknown as Date }
 
                 setCurrent(local);
             }}
             InputLabelProps={{ shrink: true }}
         />
         <GreenButton
-        onClick={async () => await onButtonClick(current)}
-        style={{
-            height: '30px'
-        }}
+            onClick={async () => await onButtonClick(current)}
+            style={{
+                height: '30px'
+            }}
         >
             Relatório
         </GreenButton>

@@ -7,6 +7,8 @@ export interface SearchFilters {
     end: DurationFilter,
     end_inverse: DurationFilter,
 
+    vence_em: moment.Moment,
+
     active: number,
 
     challengeId: number,
@@ -29,7 +31,7 @@ export class DurationFilter {
     match(date: moment.Moment): boolean {
         const added = this.duration.addDate(moment());
 
-        return date.isSameOrAfter(added);
+        return date.isSame(added);
     }
 }
 

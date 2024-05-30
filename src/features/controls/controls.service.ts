@@ -1,7 +1,7 @@
 import { AxiosResponse } from 'axios';
 import { HttpClient } from '../../infrastructure/httpclient.component';
 import { ControlsResponse, ControlsRequest, ControlsResponseItem } from 'src/contracts';
-import { BillsFiltersResult } from './bills/filters';
+import { BillFiltersDateResult, BillsFiltersResult } from './bills/filters';
 import { ControlsResponseItemWithEndDate } from 'src/contracts/controls';
 
 export class ControlsService {
@@ -16,7 +16,7 @@ export class ControlsService {
         return await this.request.get(this.BASE_URL);
     }
 
-    public async getByDates(req: BillsFiltersResult): Promise<AxiosResponse<ControlsResponse>> {
+    public async getByDates(req: BillFiltersDateResult): Promise<AxiosResponse<ControlsResponse>> {
         return await this.request.post(`${this.BASE_URL}/bydates`, req);
     }
 

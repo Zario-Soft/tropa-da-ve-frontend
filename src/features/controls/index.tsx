@@ -175,7 +175,34 @@ export default function Controls() {
 
     const onFilterChange = async (filter: SearchFilters) => {
         await setSearchFilters(filter);
-        await applyFilter(data, filter);
+
+        let localFiltered = [...(data ?? [])];
+        let filtered = false;
+
+        if (filter.vence_em && filter.vence_em.isValid()) {
+            localFiltered = localFiltered.filter(f => filter.vence_em.isSame(moment(f.end, "DD/MM/yyyy")))
+            await setFilteredData(localFiltered);
+
+            filtered = true;
+        }
+
+        if (filter.challengeId > 0) {
+            localFiltered = localFiltered.filter(f => filter.challengeId === f.challengeId);
+            await setFilteredData(localFiltered);
+
+            filtered = true;
+        }
+
+        if (filter.active >= -2) {
+            const boolActive = filter.active === -2 ? false : true;
+            localFiltered = localFiltered.filter(f => f.active === boolActive);
+            await setFilteredData(localFiltered);
+
+            filtered = true;
+        }
+
+        if (!filtered)
+            await setFilteredData(data);
     }
 
     const applyFilter = async (items?: ControlsResponseItemWithEndDate[], filter?: SearchFilters) => {

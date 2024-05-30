@@ -6,6 +6,8 @@ import NakedSelectDuration from "../../components/select-duration/select-duratio
 import './controls.css';
 import { Duration } from "../challenges/challenges.models";
 import SearchComboboxChallenge from "../challenges/searchbox-challenge.component";
+import { TextField } from "@mui/material";
+import moment from "moment";
 
 interface ControlFiltersProps {
     onFilterChange?: (e: SearchFilters) => void,
@@ -19,14 +21,11 @@ export default function ControlFilters(props: ControlFiltersProps) {
     const validMinimum = -1;
     const [current, setCurrent] = useState<SearchFilters>({} as SearchFilters);
 
-    const onDurationChange = async (e: Duration) => {
-        if (e.amount >= validMinimum) {
-            const local: SearchFilters = { ...current!, end: new DurationFilter(false, e) }
-            await setCurrent(local);
-
-            if (props.onFilterChange)
-                await props.onFilterChange(local)
-        }
+    const onDurationChange = async (e: moment.Moment) => {
+        const local: SearchFilters = { ...current!, vence_em: e }
+        await setCurrent(local);
+        if (props.onFilterChange)
+            await props.onFilterChange(local)
     }
 
     const onActiveChange = async (e: Duration) => {
@@ -56,12 +55,15 @@ export default function ControlFilters(props: ControlFiltersProps) {
             }}
         />
         <Line />
-        <NakedSelectDuration
-            validMinimum={validMinimum}
-            id="end-duration-filter"
+        <TextField
+            className='txt-box txt-box-small'
+            id="data-inicio-dt"
             label="Vence em"
-            name="vence-em-duration"
-            onChange={async (e) => await onDurationChange(e)}
+            type="date"
+            variant="outlined"
+            value={(current.vence_em ?? moment()).format("yyyy-MM-DD")}
+            onChange={async (e) => await onDurationChange(moment(e.target.value, "yyyy-MM-DD"))}
+            InputLabelProps={{ shrink: true }}
         />
         <Line />
         <SearchComboboxChallenge
@@ -74,12 +76,12 @@ export default function ControlFilters(props: ControlFiltersProps) {
             }}
         />
         {false && <><Line />
-        <NakedSelectDuration
-            validMinimum={validMinimum}
-            id="active-in-filter"
-            label="Ativo em"
-            name="active-in-duration"
-            onChange={async (e) => await onActiveChange(e)}
-        /></>}
+            <NakedSelectDuration
+                validMinimum={validMinimum}
+                id="active-in-filter"
+                label="Ativo em"
+                name="active-in-duration"
+                onChange={async (e) => await onActiveChange(e)}
+            /></>}
     </div>
 }

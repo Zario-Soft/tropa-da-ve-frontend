@@ -1,5 +1,5 @@
 import ScreenHeader from "src/components/screen-header";
-import BillsFilters, { BillsFiltersResult } from "./filters";
+import BillsFilters, { BillFiltersDateResult } from "./filters";
 import ReportBillsDialog from "./report-bills.modal";
 import { ReportContent, ReportContentSummary, ReportContentSummaryItem } from "src/components/report/report.interfaces";
 import { useContext, useState } from "react";
@@ -22,7 +22,7 @@ export default function ControlsBills() {
         await setRefreshFilter(true);
     }
 
-    const generateData = async (filters: BillsFiltersResult) => {
+    const generateData = async (filters: BillFiltersDateResult) => {
         try {
             await setIsLoading(true);
 
