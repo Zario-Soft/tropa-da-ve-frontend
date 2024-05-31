@@ -1,5 +1,5 @@
 import ScreenHeader from "src/components/screen-header";
-import ActiveStudentsFilters, { ActiveStudentsResult, DefaultActiveStudentsResultValue } from "./filters";
+import ActiveStudentsFilters, { ActiveStudentsDateResult, DefaultActiveStudentsResultValue } from "./filters";
 import { ReportContent, ReportContentSummary, ReportContentSummaryItem } from "src/components/report/report.interfaces";
 import { useContext, useState } from "react";
 import { LoadingContext } from "src/providers/loading.provider";
@@ -12,7 +12,7 @@ import { ControlsResponseItemWithEndDate } from "src/contracts/controls";
 export default function ActiveStudents() {
     const service = new ControlsService();
     const [showFilter, setRefreshFilter] = useState<boolean>(true);
-    const [filters, setFilters] = useState<ActiveStudentsResult>(DefaultActiveStudentsResultValue);
+    const [filters, setFilters] = useState<ActiveStudentsDateResult>(DefaultActiveStudentsResultValue);
     const [showReport, setShowReport] = useState<boolean>(false);
     const [controlData, setData] = useState<ControlsResponseItemWithEndDate[]>();
 
@@ -23,7 +23,7 @@ export default function ActiveStudents() {
         await setRefreshFilter(true);
     }
 
-    const generateData = async (filters: ActiveStudentsResult) => {
+    const generateData = async (filters: ActiveStudentsDateResult) => {
         try {
             await setIsLoading(true);
             await setFilters(filters);
@@ -51,10 +51,7 @@ export default function ActiveStudents() {
 
         let localData: ControlsResponseItemWithEndDate[] = controlData ?? [];
 
-        const from = moment(`${filters.yearFrom}${String(filters.monthFrom).padStart(2, '0')}01`, "YYYYMMDD");
-        const to = moment(`${filters.yearTo}${String(filters.monthTo).padStart(2, '0')}28`, "YYYYMMDD").endOf('month');
-
-        const range = getRange(from, to);
+        const range = getRange(moment(filters.from), moment(filters.to));
         
         let group: Record<string, ControlsResponseItem[]> = {};
         

@@ -1,9 +1,10 @@
-import { FormControl, InputLabel, Select, TextField } from "@mui/material";
+import { TextField } from "@mui/material";
+import moment from "moment";
 import { useState } from "react";
 import { GreenButton } from "src/components/buttons";
 
 interface ActiveStudentsProps {
-    onButtonClick: (e: ActiveStudentsResult) => Promise<void>,
+    onButtonClick: (e: ActiveStudentsDateResult) => Promise<void>,
 }
 
 export interface ActiveStudentsResult {
@@ -13,85 +14,48 @@ export interface ActiveStudentsResult {
     yearTo: number
 }
 
-export const DefaultActiveStudentsResultValue: ActiveStudentsResult = {
-    monthFrom: new Date().getMonth() + 1,
-    monthTo: new Date().getMonth() + 1,
-    yearFrom: new Date().getFullYear(),
-    yearTo: new Date().getFullYear(),
+export interface ActiveStudentsDateResult {
+    from: Date,
+    to: Date,
+}
+
+export const DefaultActiveStudentsResultValue: ActiveStudentsDateResult = {
+    from: moment().format("yyyy-MM-DD") as unknown as Date,
+    to: moment().format("yyyy-MM-DD") as unknown as Date
 }
 
 export default function ActiveStudentsFilters({ onButtonClick }: ActiveStudentsProps) {
-    const months = Array.from({ length: 12 }, (_, monthNumber) => {
-        const date = new Date(0, monthNumber);
-        const year = date.toLocaleDateString('pt-BR', { month: "long" });
-        return year.substring(0, 1).toUpperCase() + year.substring(1, year.length)
-    })
-
-    
-
-    const [current, setCurrent] = useState<ActiveStudentsResult>(DefaultActiveStudentsResultValue);
+    const [current, setCurrent] = useState<ActiveStudentsDateResult>(DefaultActiveStudentsResultValue);
 
     return <div style={{
         display: 'flex',
         gap: '20px',
         alignItems: 'center'
     }}>
-        <FormControl variant="outlined" className="general-input form-control txt-box-small">
-            <InputLabel shrink>Mês Início</InputLabel>
-            <Select
-                native
-                label="month-from"
-                value={current?.monthFrom}
-                onChange={(e: any) => {
-                    const local: ActiveStudentsResult = {...current, monthFrom: parseInt(e.target.value)}
-
-                    setCurrent(local);
-                }}
-            >
-                {months.map((month, value) => <option value={value + 1}>{month}</option>)}
-            </Select>
-        </FormControl>
-
         <TextField
-            id="valor"
             className='txt-box txt-box-small'
-            label="Ano Início"
+            id="acs-data-inicio-dt"
+            label="Inicio"
+            type="date"
             variant="outlined"
-            type="number"
-            value={current?.yearFrom}
+            value={current.from}
             onChange={(e: any) => {
-                const local: ActiveStudentsResult = {...current, yearFrom: parseInt(e.target.value)}
+                const local: ActiveStudentsDateResult = { ...current, from: moment(e.target.value).format("yyyy-MM-DD") as unknown as Date }
 
                 setCurrent(local);
             }}
             InputLabelProps={{ shrink: true }}
         />
         <p>Até</p>
-        <FormControl variant="outlined" className="general-input form-control txt-box-small">
-            <InputLabel shrink>Mês Fim</InputLabel>
-            <Select
-                native
-                label="Tipo"
-                value={current?.monthTo}
-                onChange={(e: any) => {
-                    const local: ActiveStudentsResult = {...current, monthTo: parseInt(e.target.value)}
-
-                    setCurrent(local);
-                }}
-            >
-                {months.map((month, value) => <option value={value + 1}>{month}</option>)}
-            </Select>
-        </FormControl>
-
         <TextField
-            id="valor"
             className='txt-box txt-box-small'
-            label="Ano Fim"
+            id="acs-data-fim-dt"
+            label="Fim"
+            type="date"
             variant="outlined"
-            type="number"
-            value={current?.yearTo}
+            value={current.to}
             onChange={(e: any) => {
-                const local: ActiveStudentsResult = {...current, yearTo: parseInt(e.target.value)}
+                const local: ActiveStudentsDateResult = { ...current, to: moment(e.target.value).format("yyyy-MM-DD") as unknown as Date }
 
                 setCurrent(local);
             }}
