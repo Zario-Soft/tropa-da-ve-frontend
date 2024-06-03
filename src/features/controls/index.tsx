@@ -180,7 +180,7 @@ export default function Controls() {
         let filtered = false;
 
         if (filter.vence_em && filter.vence_em.isValid()) {
-            localFiltered = localFiltered.filter(f => filter.vence_em.isSame(moment(f.end, "DD/MM/yyyy")))
+            localFiltered = localFiltered.filter(f => filter.vence_em.isSameOrBefore(moment(f.end, "DD/MM/yyyy")))
             await setFilteredData(localFiltered);
 
             filtered = true;
