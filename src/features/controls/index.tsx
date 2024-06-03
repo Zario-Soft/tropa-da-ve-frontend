@@ -9,7 +9,7 @@ import { toast } from "react-toastify";
 import ButtonsLine from "../../components/buttons-line";
 import { ControlsResponseItem } from 'src/contracts';
 import ControlFilters from "./filters";
-import { SearchBoolean, SearchFilters, allItemsBoolean, validItemsBoolean, DurationFilter } from "./controls.interfaces";
+import { SearchFilters } from "./controls.interfaces";
 import { calculateEndDate, formatDateParam, formatMoneyGrid } from "../../infrastructure/helpers";
 import moment from "moment";
 import UpsertControlModal from "./upsert-control.modal";
@@ -175,108 +175,110 @@ export default function Controls() {
 
     const onFilterChange = async (filter: SearchFilters) => {
         await setSearchFilters(filter);
+        await applyFilter(data, filter);
+    }
 
-        let localFiltered = [...(data ?? [])];
+    const applyFilter = async (items?: ControlsResponseItemWithEndDate[], filter?: SearchFilters) => {
+        if (!items || !filter) return;
+
+        let localFiltered = [...(items ?? [])];
         let filtered = false;
 
         if (filter.vence_em && filter.vence_em.isValid()) {
-            localFiltered = localFiltered.filter(f => filter.vence_em.isSameOrAfter(moment(f.end, "DD/MM/YYYY")))
-            await setFilteredData(localFiltered);
+            localFiltered = localFiltered.filter(f => filter.vence_em.isSameOrBefore(moment(f.end, "DD/MM/YYYY")))
+            filtered = true;
+        }
 
+        if (filter.vence_em_ate && filter.vence_em_ate.isValid()) {
+            localFiltered = localFiltered.filter(f => filter.vence_em_ate.isSameOrAfter(moment(f.end, "DD/MM/YYYY")))
             filtered = true;
         }
 
         if (filter.challengeId > 0) {
             localFiltered = localFiltered.filter(f => filter.challengeId === f.challengeId);
-            await setFilteredData(localFiltered);
-
             filtered = true;
         }
 
         if (filter.active >= -2) {
             const boolActive = filter.active === -2 ? false : true;
             localFiltered = localFiltered.filter(f => f.active === boolActive);
-            await setFilteredData(localFiltered);
-
             filtered = true;
         }
 
-        if (!filtered)
-            await setFilteredData(data);
-    }
-
-    const applyFilter = async (items?: ControlsResponseItemWithEndDate[], filter?: SearchFilters) => {
-        if (!items || !filter) return;
-
-        let localFiltered = [...items]
-
-        const keys = Object.getOwnPropertyNames(filter)
-
-        keys.forEach((key: string) => {
-            const tsKey = key as keyof {}
-
-            const filterField = filter![tsKey];
-
-            if ((typeof filterField) === 'object') {
-                localFiltered = tryFilterRange(filterField, tsKey, localFiltered); //from, to
-                localFiltered = tryFilterDates(filterField, tsKey, localFiltered); //duration
-            } else
-                if ((typeof filterField) === 'number') {
-                    const validBooleans = validItemsBoolean.map(m => m.value);
-                    const validAllPossibleBooleans = allItemsBoolean.map(m => m.value);
-
-                    if (validAllPossibleBooleans.includes((filterField as number))) {
-                        if (validBooleans.includes((filterField as number)))
-                            localFiltered = localFiltered.filter(user => user[tsKey] === SearchBoolean.TooBoolean(filterField as number))
-                    }
-                    else
-                        localFiltered = localFiltered.filter(user => user[tsKey] === (filterField as number))
-                }
-        });
-
-        let final = localFiltered.sort((a, b) => a.studentName < b.studentName ? -1 : 1);
-        await setFilteredData(final)
-    }
-
-    const tryFilterRange = (filterField: never, tsKey: never, localFiltered: ControlsResponseItemWithEndDate[])
-        : ControlsResponseItemWithEndDate[] => {
-        const obj = (filterField as any)
-
-        if (obj.from !== undefined && obj.from !== -1) {
-            localFiltered = localFiltered.filter(controls => controls[tsKey] >= obj.from &&
-                ((obj.to !== -1 && controls[tsKey] <= obj.to) || (obj.to === undefined || obj.to === -1)))
-        }
+        if (filtered)
+            await setFilteredData(localFiltered.sort((a, b) => a.studentName < b.studentName ? -1 : 1));
         else
-            if (obj.to !== undefined && obj.to !== -1)
-                localFiltered = localFiltered.filter(controls => controls[tsKey] <= obj.to)
+            await setFilteredData(data);
 
-        return localFiltered;
+        // let localFiltered = [...items]
+
+        // const keys = Object.getOwnPropertyNames(filter)
+
+        // keys.forEach((key: string) => {
+        //     const tsKey = key as keyof {}
+
+        //     const filterField = filter![tsKey];
+
+        //     if ((typeof filterField) === 'object') {
+        //         localFiltered = tryFilterRange(filterField, tsKey, localFiltered); //from, to
+        //         localFiltered = tryFilterDates(filterField, tsKey, localFiltered); //duration
+        //     } else
+        //         if ((typeof filterField) === 'number') {
+        //             const validBooleans = validItemsBoolean.map(m => m.value);
+        //             const validAllPossibleBooleans = allItemsBoolean.map(m => m.value);
+
+        //             if (validAllPossibleBooleans.includes((filterField as number))) {
+        //                 if (validBooleans.includes((filterField as number)))
+        //                     localFiltered = localFiltered.filter(user => user[tsKey] === SearchBoolean.TooBoolean(filterField as number))
+        //             }
+        //             else
+        //                 localFiltered = localFiltered.filter(user => user[tsKey] === (filterField as number))
+        //         }
+        // });
+
+        // let final = localFiltered.sort((a, b) => a.studentName < b.studentName ? -1 : 1);
+        // await setFilteredData(final)
     }
 
-    const tryFilterDates = (filterField: any, tsKey: never, localFiltered: ControlsResponseItemWithEndDate[])
-        : ControlsResponseItemWithEndDate[] => {
-        if (
-            !(filterField instanceof DurationFilter)
-        ) return localFiltered;
+    // const tryFilterRange = (filterField: never, tsKey: never, localFiltered: ControlsResponseItemWithEndDate[])
+    //     : ControlsResponseItemWithEndDate[] => {
+    //     const obj = (filterField as any)
 
-        const durationFilter = (filterField as DurationFilter);
+    //     if (obj.from !== undefined && obj.from !== -1) {
+    //         localFiltered = localFiltered.filter(controls => controls[tsKey] >= obj.from &&
+    //             ((obj.to !== -1 && controls[tsKey] <= obj.to) || (obj.to === undefined || obj.to === -1)))
+    //     }
+    //     else
+    //         if (obj.to !== undefined && obj.to !== -1)
+    //             localFiltered = localFiltered.filter(controls => controls[tsKey] <= obj.to)
 
-        if (!durationFilter.isValid()) return localFiltered;
+    //     return localFiltered;
+    // }
 
-        localFiltered = localFiltered.filter(controls => {
-            let obj = controls[tsKey];
-            if (!obj) {
-                const newKey = (tsKey as string).split("_")[0] as keyof {};
-                obj = controls[newKey];
-            }
+    // const tryFilterDates = (filterField: any, tsKey: never, localFiltered: ControlsResponseItemWithEndDate[])
+    //     : ControlsResponseItemWithEndDate[] => {
+    //     if (
+    //         !(filterField instanceof DurationFilter)
+    //     ) return localFiltered;
 
-            let current = moment(obj, "DD/MM/yyyy").add(-1, 'days');
+    //     const durationFilter = (filterField as DurationFilter);
 
-            return durationFilter.match(current);
-        });
+    //     if (!durationFilter.isValid()) return localFiltered;
 
-        return localFiltered;
-    }
+    //     localFiltered = localFiltered.filter(controls => {
+    //         let obj = controls[tsKey];
+    //         if (!obj) {
+    //             const newKey = (tsKey as string).split("_")[0] as keyof {};
+    //             obj = controls[newKey];
+    //         }
+
+    //         let current = moment(obj, "DD/MM/yyyy").add(-1, 'days');
+
+    //         return durationFilter.match(current);
+    //     });
+
+    //     return localFiltered;
+    // }
 
     const generateReport = (): ReportContent => {
 
@@ -318,8 +320,6 @@ export default function Controls() {
             summaries
         }
     }
-
-
 
     return <>
         <div className="page-container">

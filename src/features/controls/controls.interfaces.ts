@@ -4,10 +4,8 @@ import { Duration } from "../challenges/challenges.models";
 export interface SearchFilters {
     save: boolean,
 
-    end: DurationFilter,
-    end_inverse: DurationFilter,
-
     vence_em: moment.Moment,
+    vence_em_ate: moment.Moment,
 
     active: number,
 

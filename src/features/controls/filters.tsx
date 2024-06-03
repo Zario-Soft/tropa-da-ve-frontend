@@ -1,5 +1,5 @@
 import NakedSelect from "../../components/select/naked-select.component"
-import { DurationFilter, SearchBoolean, SearchFilters, allItemsBoolean } from "./controls.interfaces"
+import { SearchBoolean, SearchFilters, allItemsBoolean } from "./controls.interfaces"
 import { useState } from "react"
 import NakedSelectDuration from "../../components/select-duration/select-duration.component";
 
@@ -17,12 +17,28 @@ const Line = () => <div style={{ height: 'auto', display: 'flex', paddingRight: 
     <hr />
 </div>
 
+const defValues: SearchFilters = {
+    active: SearchBoolean.Indiferente().value,
+    vence_em: moment(),
+    vence_em_ate: moment(),
+    challengeId: -1,
+    save: false
+}
+
 export default function ControlFilters(props: ControlFiltersProps) {
     const validMinimum = -1;
-    const [current, setCurrent] = useState<SearchFilters>({} as SearchFilters);
 
-    const onDurationChange = async (e: moment.Moment) => {
+    const [current, setCurrent] = useState<SearchFilters>(defValues);
+
+    const onDurationFromChange = async (e: moment.Moment) => {
         const local: SearchFilters = { ...current!, vence_em: e }
+        await setCurrent(local);
+        if (props.onFilterChange)
+            await props.onFilterChange(local)
+    }
+
+    const onDurationToChange = async (e: moment.Moment) => {
+        const local: SearchFilters = { ...current!, vence_em_ate: e }
         await setCurrent(local);
         if (props.onFilterChange)
             await props.onFilterChange(local)
@@ -30,11 +46,11 @@ export default function ControlFilters(props: ControlFiltersProps) {
 
     const onActiveChange = async (e: Duration) => {
         if (e.amount >= validMinimum) {
-            const local: SearchFilters = { ...current!, end_inverse: new DurationFilter(true, e, true) }
-            await setCurrent(local);
+            // const local: SearchFilters = { ...current!, end_inverse: new DurationFilter(true, e, true) }
+            // await setCurrent(local);
 
-            if (props.onFilterChange)
-                await props.onFilterChange(local)
+            // if (props.onFilterChange)
+            //     await props.onFilterChange(local)
         }
     }
 
@@ -54,15 +70,28 @@ export default function ControlFilters(props: ControlFiltersProps) {
                     await props.onFilterChange(local)
             }}
         />
-        <Line />
+        <Line />        
         <TextField
             className='txt-box txt-box-small'
-            id="data-inicio-dt"
-            label="Vence em"
+            id="data-inicio-de-dt"
+            label="Vence de"
             type="date"
             variant="outlined"
             value={(current.vence_em ?? moment()).format("yyyy-MM-DD")}
-            onChange={async (e) => await onDurationChange(moment(e.target.value, "yyyy-MM-DD"))}
+            onChange={async (e) => await onDurationFromChange(moment(e.target.value, "yyyy-MM-DD"))}
+            InputLabelProps={{ shrink: true }}
+            style={{
+                paddingRight: '10px'
+            }}
+        />
+        <TextField
+            className='txt-box txt-box-small'
+            id="data-inicio-ate-dt"
+            label="Vence até"
+            type="date"
+            variant="outlined"
+            value={(current.vence_em_ate ?? moment()).format("yyyy-MM-DD")}
+            onChange={async (e) => await onDurationToChange(moment(e.target.value, "yyyy-MM-DD"))}
             InputLabelProps={{ shrink: true }}
         />
         <Line />
