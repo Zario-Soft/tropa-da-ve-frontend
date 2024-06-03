@@ -22,11 +22,21 @@ const columns: ZGridColDef[] = [
     { field: 'challengeName', headerName: 'Desafio', width: 190 },
 ];
 
+interface StudentGridItem {
+    id: number,
+    name: string,
+    age: number,
+    telephone: string,
+    email: string,
+    city: string,
+    challengeName: string
+  }
+
 export default function Students() {
     const studentService = new StudentsService();
     const controlsService = new ControlsService();
 
-    const [data, setData] = useState<StudentsResponseItem[]>();
+    const [data, setData] = useState<StudentGridItem[]>();
     const [selected, setSelected] = useState<StudentsResponseItem>();
     const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
     const [upsertDialogOpen, setUpsertDialogOpen] = useState(false);
@@ -41,7 +51,9 @@ export default function Students() {
             const { data } = await studentService.getAll();
 
             if (data && data.items) {
-                const ordered = data.items
+                const items = data.items as StudentGridItem[];
+
+                const ordered = items
                 .slice()
                 .sort((a, b) => a.name < b.name ? -1 : 1);
                 await setData(ordered);
@@ -82,7 +94,9 @@ export default function Students() {
     }
 
     const onRowDoubleClick = async (e: any) => {
-        await setSelected(e);
+        const local = {...e};
+        delete local.challengeName;
+        await setSelected(local as StudentsResponseItem);
         await setUpsertDialogOpen(true);
     }
 
