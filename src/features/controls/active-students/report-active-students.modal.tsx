@@ -5,6 +5,7 @@ import { ReportContent } from "src/components/report/report.interfaces";
 import Report from "src/components/report/report.component";
 
 interface ReportControlDialogProps {
+    title?: string,
     onClose: () => Promise<void>,
     onLoadContent: () => ReportContent,
 }
@@ -24,7 +25,7 @@ export default function ReportActiveStudentsDialog(props: ReportControlDialogPro
                 <Grid item xs={12}>
                     {document && <Report
                     key={'report-key'}
-                    title="Relatório de Alunas"
+                    title={props.title ?? "Relatório de Alunas"}
                     onLoadContent={props.onLoadContent}
                     />}
                 </Grid>

@@ -16,6 +16,8 @@ export default function ActiveStudents() {
     const [showReport, setShowReport] = useState<boolean>(false);
     const [controlData, setData] = useState<ControlsResponseItemWithEndDate[]>();
 
+    const [reportTitle, setReportTitle] = useState<string>();
+
     const { setIsLoading } = useContext(LoadingContext);
 
     const refresh = async () => {
@@ -50,6 +52,14 @@ export default function ActiveStudents() {
     const internalGenerateReport = (): ReportContent => {
 
         let localData: ControlsResponseItemWithEndDate[] = controlData ?? [];
+        setReportTitle(`Alunas Ativas ${moment(filters.from).format("DD/MM/YYYY")} - ${moment(filters.to).format("DD/MM/YYYY")}`);
+
+        //filter by specific dates
+        localData = localData
+        .slice()
+        .filter(student => moment(student.begin, "yyyy-MM-DD").isSameOrBefore(moment(filters.from)) && 
+                           moment(student.end, "yyyy-MM-DD").isSameOrAfter(moment(filters.to)));
+
 
         const range = getRange(moment(filters.from), moment(filters.to));
         
@@ -108,6 +118,7 @@ export default function ActiveStudents() {
         />}
 
         {showReport && <ReportActiveStudentsDialog
+            title={reportTitle}
             onClose={async () => await setShowReport(false)}
             onLoadContent={internalGenerateReport}
         />}
