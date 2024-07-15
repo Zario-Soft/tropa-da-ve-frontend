@@ -7,7 +7,6 @@ import SearchCombobox from "../../components/combobox/search-combo";
 import ChallengesService from "../challenges/challenges.service";
 import { toast } from "react-toastify";
 import { LoadingContext } from "../../providers/loading.provider";
-import { calculateEndDate } from "../../infrastructure/helpers";
 import ControlsService from "../controls/controls.service";
 import moment from "moment";
 
@@ -53,7 +52,7 @@ export default function UpsertModalStudent(props: UpsertModalChallengeProps) {
     const onChallengeSelectChange = async (challenge?: ChallengesResponseItem, localControl?:ControlsResponseItem) => {
         if (challenge) {
             const beginDate = localControl?.begin ?? control?.begin ?? challenge.begin;
-            const endDate = calculateEndDate(challenge.type, challenge.duration, challenge.end, beginDate);
+            const endDate = localControl?.end ?? control?.end ?? challenge.end;
 
             const label = `Vencimento em: ${endDate}`
 

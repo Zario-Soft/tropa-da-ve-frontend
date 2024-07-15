@@ -7,14 +7,13 @@ import moment from "moment";
 import ControlsService from "../controls.service";
 import { ControlsResponseItem } from "src/contracts";
 import ReportActiveStudentsDialog from "./report-active-students.modal";
-import { ControlsResponseItemWithEndDate } from "src/contracts/controls";
 
 export default function ActiveStudents() {
     const service = new ControlsService();
     const [showFilter, setRefreshFilter] = useState<boolean>(true);
     const [filters, setFilters] = useState<ActiveStudentsDateResult>(DefaultActiveStudentsResultValue);
     const [showReport, setShowReport] = useState<boolean>(false);
-    const [controlData, setData] = useState<ControlsResponseItemWithEndDate[]>();
+    const [controlData, setData] = useState<ControlsResponseItem[]>();
 
     const [reportTitle, setReportTitle] = useState<string>();
 
@@ -51,14 +50,14 @@ export default function ActiveStudents() {
 
     const internalGenerateReport = (): ReportContent => {
 
-        let localData: ControlsResponseItemWithEndDate[] = controlData ?? [];
+        let localData: ControlsResponseItem[] = controlData ?? [];
         setReportTitle(`Alunas Ativas ${moment(filters.from).format("DD/MM/YYYY")} - ${moment(filters.to).format("DD/MM/YYYY")}`);
 
         //filter by specific dates
-        localData = localData
-        .slice()
-        .filter(student => moment(student.begin, "yyyy-MM-DD").isSameOrBefore(moment(filters.from)) && 
-                           moment(student.end, "yyyy-MM-DD").isSameOrAfter(moment(filters.to)));
+        // localData = localData
+        // .slice()
+        // .filter(student => moment(student.begin, "yyyy-MM-DD").isSameOrBefore(moment(filters.from, "yyyy-MM-DD")) && 
+        //                    moment(student.end, "yyyy-MM-DD").isSameOrAfter(moment(filters.to, "yyyy-MM-DD")));
 
 
         const range = getRange(moment(filters.from), moment(filters.to));

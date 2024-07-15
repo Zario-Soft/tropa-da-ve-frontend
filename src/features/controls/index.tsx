@@ -10,7 +10,7 @@ import ButtonsLine from "../../components/buttons-line";
 import { ControlsResponseItem } from 'src/contracts';
 import ControlFilters from "./filters";
 import { SearchFilters } from "./controls.interfaces";
-import { calculateEndDate, formatDateParam, formatMoneyGrid } from "../../infrastructure/helpers";
+import { formatDateParam, formatMoneyGrid } from "../../infrastructure/helpers";
 import moment from "moment";
 import UpsertControlModal from "./upsert-control.modal";
 import ConfirmationDialog from "../../components/dialogs/confirmation.dialog";
@@ -18,7 +18,7 @@ import ReportControlDialog from "./report-control.modal";
 import { ReportContent, ReportContentSummary, ReportContentSummaryItem } from "../../components/report/report.interfaces";
 import ControlsBills from "./bills/controls-bills";
 import ActiveStudents from "./active-students/active-students";
-import { ControlsResponseItemWithEndDate } from "src/contracts/controls";
+//import { ControlsResponseItemWithEndDate } from "src/contracts/controls";
 
 const columns: ZGridColDef[] = [
     { field: 'challengeId', width: 0, hide: true },
@@ -30,14 +30,15 @@ const columns: ZGridColDef[] = [
         field: 'begin',
         headerName: 'Início',
         width: 120,
-        valueFormatter: formatDateParam,
+        valueFormatter: formatDateParam,        
         filterable: false
     },
     {
         field: 'end',
         headerName: 'Fim',
         width: 120,
-        filterable: false
+        filterable: false,
+        valueFormatter: formatDateParam,
     },
     { field: 'amountPaid', headerName: 'Total Pago', width: 120, valueFormatter: formatMoneyGrid, filterable: false },
     {
@@ -51,8 +52,8 @@ const Line = () => <hr style={{ width: '100%', marginTop: '20px' }} />
 
 export default function Controls() {
     let service = new ControlsService();
-    const [data, setData] = useState<ControlsResponseItemWithEndDate[]>();
-    const [filteredData, setFilteredData] = useState<ControlsResponseItemWithEndDate[]>();
+    const [data, setData] = useState<ControlsResponseItem[]>();
+    const [filteredData, setFilteredData] = useState<ControlsResponseItem[]>();
     const [selected, setSelected] = useState<ControlsResponseItem>();
     const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
     const [reportDialogOpen, setReportDialogOpen] = useState(false);
@@ -69,17 +70,11 @@ export default function Controls() {
             const { data } = await service.getAll();
 
             if (data && data.items) {
-                const result = data.items.map(control => {
-                    return {
-                        ...control,
-                        end: calculateEndDate(control.challengeType, control.challengeDuration, control.challengeEnd, control.begin)
-                    }
-                })
 
-                await setData(result);
-                await setFilteredData(result);
+                await setData(data.items);
+                await setFilteredData(data.items);
 
-                await applyFilter(result, searchFilters);
+                await applyFilter(data.items, searchFilters);
             }
         } catch {
             toast.error('Não foi possivel carregar os dados. Verifique a internet.');
@@ -178,19 +173,19 @@ export default function Controls() {
         await applyFilter(data, filter);
     }
 
-    const applyFilter = async (items?: ControlsResponseItemWithEndDate[], filter?: SearchFilters) => {
+    const applyFilter = async (items?: ControlsResponseItem[], filter?: SearchFilters) => {
         if (!items || !filter) return;
 
         let localFiltered = [...(items ?? [])];
         let filtered = false;
 
         if (filter.vence_em && filter.vence_em.isValid()) {
-            localFiltered = localFiltered.filter(f => filter.vence_em.isSameOrBefore(moment(f.end, "DD/MM/YYYY")))
+            localFiltered = localFiltered.filter(f => filter.vence_em.isSameOrBefore(moment(f.end, "yyyy-MM-DD")))
             filtered = true;
         }
 
         if (filter.vence_em_ate && filter.vence_em_ate.isValid()) {
-            localFiltered = localFiltered.filter(f => filter.vence_em_ate.isSameOrAfter(moment(f.end, "DD/MM/YYYY")))
+            localFiltered = localFiltered.filter(f => filter.vence_em_ate.isSameOrAfter(moment(f.end, "yyyy-MM-DD")))
             filtered = true;
         }
 
@@ -209,76 +204,7 @@ export default function Controls() {
             await setFilteredData(localFiltered.sort((a, b) => a.studentName < b.studentName ? -1 : 1));
         else
             await setFilteredData(data);
-
-        // let localFiltered = [...items]
-
-        // const keys = Object.getOwnPropertyNames(filter)
-
-        // keys.forEach((key: string) => {
-        //     const tsKey = key as keyof {}
-
-        //     const filterField = filter![tsKey];
-
-        //     if ((typeof filterField) === 'object') {
-        //         localFiltered = tryFilterRange(filterField, tsKey, localFiltered); //from, to
-        //         localFiltered = tryFilterDates(filterField, tsKey, localFiltered); //duration
-        //     } else
-        //         if ((typeof filterField) === 'number') {
-        //             const validBooleans = validItemsBoolean.map(m => m.value);
-        //             const validAllPossibleBooleans = allItemsBoolean.map(m => m.value);
-
-        //             if (validAllPossibleBooleans.includes((filterField as number))) {
-        //                 if (validBooleans.includes((filterField as number)))
-        //                     localFiltered = localFiltered.filter(user => user[tsKey] === SearchBoolean.TooBoolean(filterField as number))
-        //             }
-        //             else
-        //                 localFiltered = localFiltered.filter(user => user[tsKey] === (filterField as number))
-        //         }
-        // });
-
-        // let final = localFiltered.sort((a, b) => a.studentName < b.studentName ? -1 : 1);
-        // await setFilteredData(final)
     }
-
-    // const tryFilterRange = (filterField: never, tsKey: never, localFiltered: ControlsResponseItemWithEndDate[])
-    //     : ControlsResponseItemWithEndDate[] => {
-    //     const obj = (filterField as any)
-
-    //     if (obj.from !== undefined && obj.from !== -1) {
-    //         localFiltered = localFiltered.filter(controls => controls[tsKey] >= obj.from &&
-    //             ((obj.to !== -1 && controls[tsKey] <= obj.to) || (obj.to === undefined || obj.to === -1)))
-    //     }
-    //     else
-    //         if (obj.to !== undefined && obj.to !== -1)
-    //             localFiltered = localFiltered.filter(controls => controls[tsKey] <= obj.to)
-
-    //     return localFiltered;
-    // }
-
-    // const tryFilterDates = (filterField: any, tsKey: never, localFiltered: ControlsResponseItemWithEndDate[])
-    //     : ControlsResponseItemWithEndDate[] => {
-    //     if (
-    //         !(filterField instanceof DurationFilter)
-    //     ) return localFiltered;
-
-    //     const durationFilter = (filterField as DurationFilter);
-
-    //     if (!durationFilter.isValid()) return localFiltered;
-
-    //     localFiltered = localFiltered.filter(controls => {
-    //         let obj = controls[tsKey];
-    //         if (!obj) {
-    //             const newKey = (tsKey as string).split("_")[0] as keyof {};
-    //             obj = controls[newKey];
-    //         }
-
-    //         let current = moment(obj, "DD/MM/yyyy").add(-1, 'days');
-
-    //         return durationFilter.match(current);
-    //     });
-
-    //     return localFiltered;
-    // }
 
     const generateReport = (): ReportContent => {
 
@@ -286,9 +212,9 @@ export default function Controls() {
 
         const groupedData = localData
             .slice()
-            .sort((a, b) => moment(a.end, "DD/MM/yyyy").isSameOrBefore(moment(b.end, "DD/MM/yyyy")) ? -1 : 1)
-            .reduce<{ [key: string]: ControlsResponseItemWithEndDate[] }>((group, current) => {
-                const key = moment(current.end, "DD/MM/yyyy").format("MM/yyyy");
+            .sort((a, b) => moment(a.end, "yyyy-MM-DD").isSameOrBefore(moment(b.end, "yyyy-MM-DD")) ? -1 : 1)
+            .reduce<{ [key: string]: ControlsResponseItem[] }>((group, current) => {
+                const key = moment(current.end, "yyyy-MM-DD").format("MM/yyyy");
                 if (group[key])
                     group[key] = [...group[key], current];
                 else
