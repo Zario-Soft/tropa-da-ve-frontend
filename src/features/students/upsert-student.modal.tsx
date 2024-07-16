@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 import { LoadingContext } from "../../providers/loading.provider";
 import ControlsService from "../controls/controls.service";
 import moment from "moment";
+import { formatDate } from "src/infrastructure/helpers";
 
 export interface UpsertStudentResponse {
     student: StudentsResponseItem,
@@ -54,7 +55,7 @@ export default function UpsertModalStudent(props: UpsertModalChallengeProps) {
             const beginDate = localControl?.begin ?? control?.begin ?? challenge.begin;
             const endDate = localControl?.end ?? control?.end ?? challenge.end;
 
-            const label = `Vencimento em: ${endDate}`
+            const label = `Vencimento em: ${formatDate(endDate)}`
 
             await setSelectedChallenge({ challenge: {...challenge, begin: beginDate}, label });
 

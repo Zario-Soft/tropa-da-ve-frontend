@@ -43,7 +43,7 @@ export default function ControlsBills() {
 
         const groupedData = localData
             .slice()
-            .sort((a, b) => moment(a.begin, "DD/MM/yyyy").isSameOrBefore(moment(b.begin, "DD/MM/yyyy")) ? -1 : 1)
+            .sort((a, b) => moment(a.begin, "yyyy-MM-DD").isSameOrBefore(moment(b.begin, "yyyy-MM-DD")) ? -1 : 1)
             .reduce<{ [key: string]: Record<string, number> }>((group, current) => {
                 const key = moment(current.begin, "yyyy-MM-DD").format("MM/yyyy");
                 

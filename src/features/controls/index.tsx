@@ -18,7 +18,6 @@ import ReportControlDialog from "./report-control.modal";
 import { ReportContent, ReportContentSummary, ReportContentSummaryItem } from "../../components/report/report.interfaces";
 import ControlsBills from "./bills/controls-bills";
 import ActiveStudents from "./active-students/active-students";
-//import { ControlsResponseItemWithEndDate } from "src/contracts/controls";
 
 const columns: ZGridColDef[] = [
     { field: 'challengeId', width: 0, hide: true },
@@ -39,6 +38,7 @@ const columns: ZGridColDef[] = [
         width: 120,
         filterable: false,
         valueFormatter: formatDateParam,
+        sortComparator: (v1 : string, v2 : string) => moment(v1, "yyyy-MM-DD").isBefore( moment(v2, "yyyy-MM-DD")) ? 1 : -1,
     },
     { field: 'amountPaid', headerName: 'Total Pago', width: 120, valueFormatter: formatMoneyGrid, filterable: false },
     {
