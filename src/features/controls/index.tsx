@@ -43,7 +43,7 @@ const columns: ZGridColDef[] = [
     { field: 'amountPaid', headerName: 'Total Pago', width: 120, valueFormatter: formatMoneyGrid, filterable: false },
     {
         field: 'active',
-        headerName: 'Ativo?',
+        headerName: 'Aluno Ativo?',
         width: 120,
         valueFormatter: (params: GridValueFormatterParams) => params.value ? "Sim" : "Não", filterable: false
     },
@@ -71,10 +71,17 @@ export default function Controls() {
 
             if (data && data.items) {
 
-                await setData(data.items);
-                await setFilteredData(data.items);
+                const calculated = data.items.map((current) => ({
+                    ...current,
+                    //Alunas inativas = já participaram de algum desafio, mas não renovaram
+                    active: data.items.find(item => item.studentId === current.studentId && 
+                                                    moment(item.end, "yyyy-MM-DD").isSameOrAfter(moment(moment(), "yyyy-MM-DD"))) !== undefined
+                }))
 
-                await applyFilter(data.items, searchFilters);
+                await setData(calculated);
+                await setFilteredData(calculated);
+
+                await applyFilter(calculated, searchFilters);
             }
         } catch {
             toast.error('Não foi possivel carregar os dados. Verifique a internet.');
