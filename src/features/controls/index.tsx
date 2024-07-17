@@ -10,7 +10,7 @@ import ButtonsLine from "../../components/buttons-line";
 import { ControlsResponseItem } from 'src/contracts';
 import ControlFilters from "./filters";
 import { SearchFilters } from "./controls.interfaces";
-import { formatDateParam, formatMoneyGrid } from "../../infrastructure/helpers";
+import { formatDate, formatDateParam, formatMoneyGrid } from "../../infrastructure/helpers";
 import moment from "moment";
 import UpsertControlModal from "./upsert-control.modal";
 import ConfirmationDialog from "../../components/dialogs/confirmation.dialog";
@@ -237,7 +237,7 @@ export default function Controls() {
                     .sort((a, b) => a.studentName < b.studentName ? -1 : 1)
                     .map((item) => {
                         const summaryItem: ReportContentSummaryItem = {
-                            value: `${item.end} - ${item.studentName} - ${item.challengeName}${(item.studentPhone ? ` - ${item.studentPhone}` : '')}`
+                            value: `${formatDate(item.end)} - ${item.studentName} - ${item.challengeName}${(item.studentPhone ? ` - ${item.studentPhone}` : '')}`
                         }
 
                         return summaryItem
