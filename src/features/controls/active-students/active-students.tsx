@@ -45,6 +45,11 @@ export default function ActiveStudents() {
         for (let i = 0; i <= diff; i++) {
             range.push(startDate.clone().add(i, 'month'))
         }
+
+        if (diff === 0) { //add final date when both dates are in the same month
+            range.push(endDate.clone())
+        }
+
         return range
     }
 
@@ -61,46 +66,63 @@ export default function ActiveStudents() {
 
 
         const range = getRange(moment(filters.from), moment(filters.to));
-        
+
         let group: Record<string, ControlsResponseItem[]> = {};
-        
-        range
-        .slice()
-        .map<{ [key: string]: ControlsResponseItem[] }>((date) => {
-            const key = moment(date, "yyyy-MM-DD").endOf('month').format("yyyy-MM-DD");
-            group[key] = [];
 
-            return group;
+        //check whether range is within the same month
+        const sameMonth = range.every(date => date.month === range[0].month) && range.length === 2;
 
-        });
-
-        Object.keys(group).forEach((currDate: string) => {
+        if (sameMonth) {
+            const key = moment(range[0], "yyyy-MM-DD").format("yyyy-MM-DD");
             const filtered = localData
-            .slice()
-            .filter(a => moment(currDate, "yyyy-MM-DD").isBetween(moment(a.begin, "yyyy-MM-DD").startOf('month'), moment(a.end, "yyyy-MM-DD").endOf('month')));
+                .slice()
+                .filter(student => moment(range[0], "yyyy-MM-DD").isBetween(moment(student.begin, "yyyy-MM-DD"), moment(student.end, "yyyy-MM-DD")) || 
+                                   moment(range[1], "yyyy-MM-DD").isBetween(moment(student.begin, "yyyy-MM-DD"), moment(student.end, "yyyy-MM-DD")));
+
+            group[key] = filtered;
+        }
+        else {
+            range
+                .slice()
+                .map<{ [key: string]: ControlsResponseItem[] }>((date, index) => {
+                    const key = index === 0 || index === range.length - 1
+                        ? moment(date, "yyyy-MM-DD").format("yyyy-MM-DD")
+                        : moment(date, "yyyy-MM-DD").endOf('month').format("yyyy-MM-DD");
+
+                    group[key] = [];
+
+                    return group;
+
+                });
+       
+            Object.keys(group).forEach((currDate: string) => {
+                const filtered = localData
+                    .slice()
+                    .filter(student => moment(currDate, "yyyy-MM-DD").isBetween(moment(student.begin, "yyyy-MM-DD"), moment(student.end, "yyyy-MM-DD")));
 
                 group[currDate] = [...group[currDate], ...filtered];
-        });
+            });
+        }
 
         const summaries = Object.keys(group)
-        .filter(key => group[key].length > 0)        
-        .map((key) => {
-            const summary: ReportContentSummary = {
-                items: group[key]
-                    .sort((a, b) => a.studentName < b.studentName ? -1 : 1)
-                    .map((item) => {
-                        const summaryItem: ReportContentSummaryItem = {
-                            value: `${item.studentName} - ${item.challengeName}${(item.studentPhone ? ` - ${item.studentPhone}` : '')}`
-                        }
+            .filter(key => group[key].length > 0)
+            .map((key) => {
+                const summary: ReportContentSummary = {
+                    items: group[key]
+                        .sort((a, b) => a.studentName < b.studentName ? -1 : 1)
+                        .map((item) => {
+                            const summaryItem: ReportContentSummaryItem = {
+                                value: `${item.studentName} - ${item.challengeName}${(item.studentPhone ? ` - ${item.studentPhone}` : '')}`
+                            }
 
-                        return summaryItem
-                    }),
-                title: `Alunas ativas em ${moment(key, "yyyy-MM-DD").format("MM/yyyy")}`,
-                breakPage: true,
-            }
+                            return summaryItem
+                        }),
+                    title: `Alunas ativas em ${moment(key, "yyyy-MM-DD").format("MM/yyyy")}`,
+                    breakPage: true,
+                }
 
-            return summary;
-        })
+                return summary;
+            })
 
         return {
             summaries
