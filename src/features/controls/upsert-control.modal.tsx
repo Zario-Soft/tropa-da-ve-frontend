@@ -92,11 +92,14 @@ export default function UpsertControlModal(props: UpsertControlModalProps) {
     };
 
     const onSelectedChallengeChanges = async (e?: ChallengesResponseItem) => {
+        const challengeType = e?.type ?? 'Fixo';
+        
         if (isNew) {
             setCurrent({
                 ...current,
                 amountPaid: e?.price ?? 0,
-                begin: e?.begin ?? formatDateUnknown(new Date())
+                begin: e?.begin ?? formatDateUnknown(new Date()),
+                challengeType: challengeType
             });
         }
 
@@ -168,7 +171,7 @@ export default function UpsertControlModal(props: UpsertControlModalProps) {
                         InputLabelProps={{ shrink: true }}
                     />
 
-                    <TextField
+                    {!current || !current.challengeType || current.challengeType === 'Variavel' && <TextField
                         className='txt-box txt-box-small'
                         id="data-inicio-dt"
                         label="Data de inicio"
@@ -177,7 +180,7 @@ export default function UpsertControlModal(props: UpsertControlModalProps) {
                         value={current.begin}
                         onChange={(e) => setCurrent({ ...current, begin: moment(e.target.value).format("yyyy-MM-DD") as unknown as Date })}
                         InputLabelProps={{ shrink: true }}
-                    />
+                    />}
 
                     {!isNew && <FormControlLabel
                         control={
