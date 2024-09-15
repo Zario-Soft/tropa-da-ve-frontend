@@ -171,7 +171,7 @@ export default function UpsertControlModal(props: UpsertControlModalProps) {
                         InputLabelProps={{ shrink: true }}
                     />
 
-                    {!current || !current.challengeType || current.challengeType === 'Variavel' && <TextField
+                    {(!current || !current.challengeType || current.challengeType === 'Variavel') && <TextField
                         className='txt-box txt-box-small'
                         id="data-inicio-dt"
                         label="Data de inicio"
