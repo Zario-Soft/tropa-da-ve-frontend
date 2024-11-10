@@ -93,7 +93,7 @@ export default function UpsertControlModal(props: UpsertControlModalProps) {
 
     const onSelectedChallengeChanges = async (e?: ChallengesResponseItem) => {
         const challengeType = e?.type ?? 'Fixo';
-        
+
         if (isNew) {
             setCurrent({
                 ...current,
@@ -115,11 +115,22 @@ export default function UpsertControlModal(props: UpsertControlModalProps) {
     }
 
     const onSave = async () => {
+        if (!selectedChallenge) {
+            toast.error("É necessário escolher um desafio.")
+            return;
+        }
+
+        if (!selectedStudent) {
+            toast.error("É necessário escolher um estudante.")
+            return;
+        }
+
+
         await props.onSave(
             {
                 ...current,
-                studentId: selectedStudent?.id!,
-                challengeId: selectedChallenge?.id!,
+                studentId: selectedStudent.id,
+                challengeId: selectedChallenge.id,
             });
     }
 
